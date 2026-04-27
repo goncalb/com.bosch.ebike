@@ -1,0 +1,565 @@
+{
+  "id": "com.bosch.ebike",
+  "version": "1.0.0",
+  "compatibility": ">=12.0.0",
+  "sdk": 3,
+  "platforms": ["local"],
+  "name": {
+    "en": "Bosch eBike"
+  },
+  "description": {
+    "en": "Monitor your Bosch Smart System eBike in Homey"
+  },
+  "tags": {
+    "en": ["bosch", "ebike", "bicycle", "smart system", "battery", "cycling"]
+  },
+  "category": ["appliances"],
+  "permissions": [],
+  "images": {
+    "small": "/assets/images/small.png",
+    "large": "/assets/images/large.png",
+    "xlarge": "/assets/images/xlarge.png"
+  },
+  "author": {
+    "name": "",
+    "email": ""
+  },
+  "capabilities": {
+    "ebike_charging": {
+      "type": "boolean",
+      "title": { "en": "Charging" },
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "icon": "/assets/capabilities/charging.svg",
+      "insightsTitleTrue": { "en": "Charging started" },
+      "insightsTitleFalse": { "en": "Charging stopped" }
+    },
+    "ebike_battery_energy_remaining": {
+      "type": "number",
+      "title": { "en": "Remaining Energy" },
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "icon": "/assets/capabilities/battery.svg",
+      "units": { "en": "Wh" },
+      "min": 0,
+      "decimals": 0
+    },
+    "ebike_battery_capacity": {
+      "type": "number",
+      "title": { "en": "Battery Capacity" },
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "insights": false,
+      "icon": "/assets/capabilities/battery.svg",
+      "units": { "en": "Wh" },
+      "min": 0,
+      "decimals": 0
+    },
+    "meter_distance": {
+      "type": "number",
+      "title": { "en": "Odometer" },
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "icon": "/assets/capabilities/odometer.svg",
+      "units": { "en": "km" },
+      "min": 0,
+      "decimals": 1
+    },
+    "ebike_charge_cycles": {
+      "type": "number",
+      "title": { "en": "Charge Cycles" },
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "icon": "/assets/capabilities/battery.svg",
+      "units": { "en": "" },
+      "min": 0,
+      "decimals": 1
+    },
+    "ebike_charge_cycles_on_bike": {
+      "type": "number",
+      "title": { "en": "Charge Cycles (On Bike)" },
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "insights": false,
+      "icon": "/assets/capabilities/battery.svg",
+      "units": { "en": "" },
+      "min": 0,
+      "decimals": 1
+    },
+    "ebike_charge_cycles_off_bike": {
+      "type": "number",
+      "title": { "en": "Charge Cycles (Off Bike)" },
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "insights": false,
+      "icon": "/assets/capabilities/battery.svg",
+      "units": { "en": "" },
+      "min": 0,
+      "decimals": 1
+    },
+    "ebike_lifetime_energy": {
+      "type": "number",
+      "title": { "en": "Lifetime Energy Delivered" },
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "icon": "/assets/capabilities/battery.svg",
+      "units": { "en": "Wh" },
+      "min": 0,
+      "decimals": 0
+    },
+    "measure_range_eco": {
+      "type": "number",
+      "title": { "en": "Range (Eco)" },
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "icon": "/assets/capabilities/range.svg",
+      "units": { "en": "km" },
+      "min": 0,
+      "decimals": 0
+    },
+    "measure_range_tour": {
+      "type": "number",
+      "title": { "en": "Range (Tour)" },
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "icon": "/assets/capabilities/range.svg",
+      "units": { "en": "km" },
+      "min": 0,
+      "decimals": 0
+    },
+    "measure_range_sport": {
+      "type": "number",
+      "title": { "en": "Range (Sport)" },
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "icon": "/assets/capabilities/range.svg",
+      "units": { "en": "km" },
+      "min": 0,
+      "decimals": 0
+    },
+    "measure_range_emtb": {
+      "type": "number",
+      "title": { "en": "Range (eMTB)" },
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "icon": "/assets/capabilities/range.svg",
+      "units": { "en": "km" },
+      "min": 0,
+      "decimals": 0
+    },
+    "measure_range_turbo": {
+      "type": "number",
+      "title": { "en": "Range (Turbo)" },
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "icon": "/assets/capabilities/range.svg",
+      "units": { "en": "km" },
+      "min": 0,
+      "decimals": 0
+    },
+    "meter_motor_hours": {
+      "type": "number",
+      "title": { "en": "Motor Total Hours" },
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "icon": "/assets/capabilities/motor.svg",
+      "units": { "en": "h" },
+      "min": 0,
+      "decimals": 1
+    },
+    "ebike_motor_hours_assist": {
+      "type": "number",
+      "title": { "en": "Motor Assist Hours" },
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "icon": "/assets/capabilities/motor.svg",
+      "units": { "en": "h" },
+      "min": 0,
+      "decimals": 1
+    },
+    "ebike_max_assist_speed": {
+      "type": "number",
+      "title": { "en": "Max Assist Speed" },
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "insights": false,
+      "icon": "/assets/capabilities/speed.svg",
+      "units": { "en": "km/h" },
+      "min": 0,
+      "decimals": 1
+    },
+    "ebike_next_service": {
+      "type": "number",
+      "title": { "en": "Next Service (Odometer)" },
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "insights": false,
+      "icon": "/assets/capabilities/odometer.svg",
+      "units": { "en": "km" },
+      "min": 0,
+      "decimals": 0
+    },
+    "ebike_last_ride_distance": {
+      "type": "number",
+      "title": { "en": "Last Ride Distance" },
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "icon": "/assets/capabilities/ride.svg",
+      "units": { "en": "km" },
+      "min": 0,
+      "decimals": 2
+    },
+    "ebike_last_ride_duration": {
+      "type": "number",
+      "title": { "en": "Last Ride Duration" },
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "icon": "/assets/capabilities/ride.svg",
+      "units": { "en": "min" },
+      "min": 0,
+      "decimals": 0
+    },
+    "ebike_last_ride_avg_speed": {
+      "type": "number",
+      "title": { "en": "Last Ride Avg Speed" },
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "icon": "/assets/capabilities/speed.svg",
+      "units": { "en": "km/h" },
+      "min": 0,
+      "decimals": 1
+    },
+    "ebike_last_ride_max_speed": {
+      "type": "number",
+      "title": { "en": "Last Ride Max Speed" },
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "insights": false,
+      "icon": "/assets/capabilities/speed.svg",
+      "units": { "en": "km/h" },
+      "min": 0,
+      "decimals": 1
+    },
+    "ebike_last_ride_avg_cadence": {
+      "type": "number",
+      "title": { "en": "Last Ride Avg Cadence" },
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "insights": false,
+      "icon": "/assets/capabilities/cadence.svg",
+      "units": { "en": "rpm" },
+      "min": 0,
+      "decimals": 0
+    },
+    "ebike_last_ride_max_cadence": {
+      "type": "number",
+      "title": { "en": "Last Ride Max Cadence" },
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "insights": false,
+      "icon": "/assets/capabilities/cadence.svg",
+      "units": { "en": "rpm" },
+      "min": 0,
+      "decimals": 0
+    },
+    "ebike_last_ride_avg_power": {
+      "type": "number",
+      "title": { "en": "Last Ride Avg Rider Power" },
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "icon": "/assets/capabilities/power.svg",
+      "units": { "en": "W" },
+      "min": 0,
+      "decimals": 0
+    },
+    "ebike_last_ride_max_power": {
+      "type": "number",
+      "title": { "en": "Last Ride Max Rider Power" },
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "insights": false,
+      "icon": "/assets/capabilities/power.svg",
+      "units": { "en": "W" },
+      "min": 0,
+      "decimals": 0
+    },
+    "ebike_last_ride_calories": {
+      "type": "number",
+      "title": { "en": "Last Ride Calories" },
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "icon": "/assets/capabilities/power.svg",
+      "units": { "en": "kcal" },
+      "min": 0,
+      "decimals": 0
+    },
+    "ebike_last_ride_elevation_gain": {
+      "type": "number",
+      "title": { "en": "Last Ride Elevation Gain" },
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "icon": "/assets/capabilities/elevation.svg",
+      "units": { "en": "m" },
+      "min": 0,
+      "decimals": 0
+    },
+    "ebike_last_ride_elevation_loss": {
+      "type": "number",
+      "title": { "en": "Last Ride Elevation Loss" },
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "insights": false,
+      "icon": "/assets/capabilities/elevation.svg",
+      "units": { "en": "m" },
+      "min": 0,
+      "decimals": 0
+    },
+    "ebike_total_rides": {
+      "type": "number",
+      "title": { "en": "Total Rides" },
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "icon": "/assets/capabilities/ride.svg",
+      "units": { "en": "" },
+      "min": 0,
+      "decimals": 0
+    },
+    "ebike_total_activity_distance": {
+      "type": "number",
+      "title": { "en": "Total Activity Distance" },
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "icon": "/assets/capabilities/odometer.svg",
+      "units": { "en": "km" },
+      "min": 0,
+      "decimals": 1
+    },
+    "ebike_total_ride_time": {
+      "type": "number",
+      "title": { "en": "Total Ride Time" },
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "icon": "/assets/capabilities/ride.svg",
+      "units": { "en": "h" },
+      "min": 0,
+      "decimals": 1
+    },
+    "ebike_total_calories": {
+      "type": "number",
+      "title": { "en": "Total Calories Burned" },
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "icon": "/assets/capabilities/power.svg",
+      "units": { "en": "kcal" },
+      "min": 0,
+      "decimals": 0
+    },
+    "ebike_total_elevation_gain": {
+      "type": "number",
+      "title": { "en": "Total Elevation Gain" },
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "icon": "/assets/capabilities/elevation.svg",
+      "units": { "en": "m" },
+      "min": 0,
+      "decimals": 0
+    }
+  },
+  "drivers": [
+    {
+      "id": "ebike",
+      "name": { "en": "Bosch eBike" },
+      "class": "other",
+      "capabilities": [
+        "measure_battery",
+        "ebike_charging",
+        "ebike_battery_energy_remaining",
+        "ebike_battery_capacity",
+        "meter_distance",
+        "ebike_charge_cycles",
+        "ebike_charge_cycles_on_bike",
+        "ebike_charge_cycles_off_bike",
+        "ebike_lifetime_energy",
+        "measure_range_eco",
+        "measure_range_tour",
+        "measure_range_sport",
+        "measure_range_emtb",
+        "measure_range_turbo",
+        "meter_motor_hours",
+        "ebike_motor_hours_assist",
+        "ebike_max_assist_speed",
+        "ebike_next_service",
+        "ebike_last_ride_distance",
+        "ebike_last_ride_duration",
+        "ebike_last_ride_avg_speed",
+        "ebike_last_ride_max_speed",
+        "ebike_last_ride_avg_cadence",
+        "ebike_last_ride_max_cadence",
+        "ebike_last_ride_avg_power",
+        "ebike_last_ride_max_power",
+        "ebike_last_ride_calories",
+        "ebike_last_ride_elevation_gain",
+        "ebike_last_ride_elevation_loss",
+        "ebike_total_rides",
+        "ebike_total_activity_distance",
+        "ebike_total_ride_time",
+        "ebike_total_calories",
+        "ebike_total_elevation_gain"
+      ],
+      "platforms": ["local"],
+      "connectivity": ["cloud"],
+      "images": {
+        "small": "/assets/images/small.png",
+        "large": "/assets/images/large.png",
+        "xlarge": "/assets/images/xlarge.png"
+      },
+      "pair": [
+        {
+          "id": "login_credentials",
+          "template": "login_credentials",
+          "options": {
+            "title": { "en": "Connect your Bosch eBike" },
+            "usernameLabel": { "en": "Instructions" },
+            "usernamePlaceholder": { "en": "Go to app settings → Copy Login URL → sign in → copy code" },
+            "passwordLabel": { "en": "Authorization Code" },
+            "passwordPlaceholder": { "en": "Paste the code= value from the redirect URL" }
+          }
+        },
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": { "next": "add_devices" }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "repair": [
+        {
+          "id": "login_credentials",
+          "template": "login_credentials",
+          "options": {
+            "title": { "en": "Re-authenticate" },
+            "usernameLabel": { "en": "Instructions" },
+            "usernamePlaceholder": { "en": "Go to app settings → Copy Login URL → sign in → copy code" },
+            "passwordLabel": { "en": "Authorization Code" },
+            "passwordPlaceholder": { "en": "Paste the code= value from the redirect URL" }
+          }
+        }
+      ]
+    }
+  ],
+  "flow": {
+    "triggers": [
+      {
+        "id": "ebike_charging_started",
+        "title": { "en": "eBike charging started" },
+        "hint": { "en": "Triggers when the eBike is plugged in and starts charging." },
+        "args": [{ "name": "device", "type": "device", "filter": "driver_id=ebike" }]
+      },
+      {
+        "id": "ebike_charging_stopped",
+        "title": { "en": "eBike charging stopped" },
+        "hint": { "en": "Triggers when the eBike is unplugged or charging finishes." },
+        "args": [{ "name": "device", "type": "device", "filter": "driver_id=ebike" }]
+      },
+      {
+        "id": "ebike_battery_below",
+        "title": { "en": "eBike battery drops below" },
+        "titleFormatted": { "en": "eBike battery drops below [[percentage]]%" },
+        "hint": { "en": "Triggers when the battery level drops below a specified percentage." },
+        "args": [
+          { "name": "device", "type": "device", "filter": "driver_id=ebike" },
+          { "name": "percentage", "type": "number", "min": 1, "max": 99, "step": 1, "label": { "en": "%" } }
+        ]
+      },
+      {
+        "id": "ebike_new_ride",
+        "title": { "en": "New eBike ride recorded" },
+        "hint": { "en": "Triggers when a new ride is detected." },
+        "tokens": [
+          { "name": "distance", "type": "number", "title": { "en": "Distance (km)" } },
+          { "name": "duration", "type": "number", "title": { "en": "Duration (min)" } },
+          { "name": "calories", "type": "number", "title": { "en": "Calories (kcal)" } },
+          { "name": "elevation_gain", "type": "number", "title": { "en": "Elevation gain (m)" } }
+        ],
+        "args": [{ "name": "device", "type": "device", "filter": "driver_id=ebike" }]
+      }
+    ],
+    "conditions": [
+      {
+        "id": "ebike_is_charging",
+        "title": { "en": "eBike !{{is|is not}} charging" },
+        "args": [{ "name": "device", "type": "device", "filter": "driver_id=ebike" }]
+      },
+      {
+        "id": "ebike_battery_level_condition",
+        "title": { "en": "eBike battery is !{{above|below}}" },
+        "titleFormatted": { "en": "eBike battery is !{{above|below}} [[percentage]]%" },
+        "args": [
+          { "name": "device", "type": "device", "filter": "driver_id=ebike" },
+          { "name": "percentage", "type": "number", "min": 1, "max": 99, "step": 1, "label": { "en": "%" } }
+        ]
+      }
+    ],
+    "actions": []
+  }
+}
+

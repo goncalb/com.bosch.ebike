@@ -1,0 +1,16 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Remaining Energy"
+  },
+  "uiComponent": "sensor",
+  "getable": true,
+  "setable": false,
+  "insights": true,
+  "icon": "/assets/capabilities/battery.svg",
+  "units": {
+    "en": "Wh"
+  },
+  "min": 0,
+  "decimals": 0
+}

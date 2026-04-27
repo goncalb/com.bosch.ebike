@@ -1,0 +1,17 @@
+{
+  "type": "boolean",
+  "title": {
+    "en": "Charging"
+  },
+  "uiComponent": "sensor",
+  "getable": true,
+  "setable": false,
+  "insights": true,
+  "icon": "/assets/capabilities/charging.svg",
+  "insightsTitleTrue": {
+    "en": "Charging started"
+  },
+  "insightsTitleFalse": {
+    "en": "Charging stopped"
+  }
+}

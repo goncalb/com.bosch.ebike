@@ -1,0 +1,16 @@
+{
+  "id": "ebike_charging_stopped",
+  "title": {
+    "en": "eBike charging stopped"
+  },
+  "hint": {
+    "en": "Triggers when the eBike is unplugged or charging finishes."
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=ebike"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Energy Used (Sport)"
+  },
+  "uiComponent": "sensor",
+  "getable": true,
+  "setable": false,
+  "insights": true,
+  "icon": "/assets/capabilities/power.svg",
+  "units": {
+    "en": "Wh"
+  },
+  "min": 0,
+  "decimals": 0
+}

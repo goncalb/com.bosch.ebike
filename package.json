@@ -1,0 +1,27 @@
+{
+  "name": "com.bosch.ebike",
+  "version": "1.0.0",
+  "description": "Bosch eBike Smart System integration for Homey Pro",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "node-fetch": "3.3.2"
+  },
+  "devDependencies": {
+    "homey": "^3.0.0"
+  },
+  "keywords": [
+    "homey",
+    "ebike",
+    "bosch",
+    "smartsystem"
+  ],
+  "author": "",
+  "license": "MIT"
+}
+

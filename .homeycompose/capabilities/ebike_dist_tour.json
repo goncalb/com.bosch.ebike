@@ -1,0 +1,16 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Distance (Tour)"
+  },
+  "uiComponent": "sensor",
+  "getable": true,
+  "setable": false,
+  "insights": true,
+  "icon": "/assets/capabilities/odometer.svg",
+  "units": {
+    "en": "km"
+  },
+  "min": 0,
+  "decimals": 1
+}

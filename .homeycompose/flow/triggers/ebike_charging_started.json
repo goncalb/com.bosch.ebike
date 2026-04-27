@@ -1,0 +1,16 @@
+{
+  "id": "ebike_charging_started",
+  "title": {
+    "en": "eBike charging started"
+  },
+  "hint": {
+    "en": "Triggers when the eBike is plugged in and starts charging."
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=ebike"
+    }
+  ]
+}

@@ -1,0 +1,200 @@
+'use strict';
+
+const Homey    = require('homey');
+const BoschEBikeApi = require('../../lib/BoschEBikeApi');
+const { OAUTH2_REDIRECT_URI } = require('../../lib/constants');
+
+class EBikeDriver extends Homey.Driver {
+
+  async onInit() {
+    this.log('eBike driver initialised');
+    this.log('Driver onInit called successfully');
+
+    // ── Flow: "Charging started" ─────────────────────────────────────────────
+    this.chargingStartedTrigger = this.homey.flow.getDeviceTriggerCard('ebike_charging_started');
+    this.chargingStoppedTrigger = this.homey.flow.getDeviceTriggerCard('ebike_charging_stopped');
+    this.batteryBelowTrigger    = this.homey.flow.getDeviceTriggerCard('ebike_battery_below');
+    this.newRideTrigger         = this.homey.flow.getDeviceTriggerCard('ebike_new_ride');
+
+    // The battery_below trigger fires when the value drops below the arg threshold
+    this.batteryBelowTrigger.registerRunListener(async (args, state) => {
+      return state.battery < args.percentage;
+    });
+
+    // ── Flow conditions ──────────────────────────────────────────────────────
+    this.homey.flow
+      .getConditionCard('ebike_is_charging')
+      .registerRunListener(async (args) => {
+        return args.device.getCapabilityValue('ebike_charging') === true;
+      });
+
+    this.homey.flow
+      .getConditionCard('ebike_battery_level_condition')
+      .registerRunListener(async (args, state) => {
+        const pct = args.device.getCapabilityValue('measure_battery') ?? 0;
+        // The title uses !{{above|below}}, so true = "above", false = "below"
+        return pct > args.percentage;
+      });
+  }
+
+  // ── Pairing ─────────────────────────────────────────────────────────────────
+  //
+  // The Client ID is read from app settings (configured once by the admin).
+  // Each family member just logs in with their own Bosch account when they
+  // add their bike — no need to enter credentials in the wizard.
+  //
+  // Pair steps:
+  //   1. login_oauth2   — built-in: opens Bosch login in browser
+  //   2. list_devices   — built-in: shows bikes on this user's account
+  //   3. add_devices    — built-in: creates selected devices
+  async onRepair(session, device) {
+    this.log('onRepair called for:', device.getName());
+
+    session.setHandler('login', async ({ username, password }) => {
+      const code = (password || '').trim();
+
+      if (!code) {
+        throw new Error(
+          'Go to the Bosch eBike app settings, copy the login URL, sign in, then paste the code here.'
+        );
+      }
+
+      let finalCode = code;
+      if (code.includes('code=')) {
+        try {
+          const urlObj = new URL(code.replace('onebikeapp-ios://', 'https://app/'));
+          finalCode = urlObj.searchParams.get('code') || code;
+        } catch(e) {
+          const match = code.match(/[?&]code=([^&]+)/);
+          if (match) finalCode = match[1];
+        }
+      }
+      try { finalCode = decodeURIComponent(finalCode); } catch(e) {}
+
+      this.log('Repair: exchanging code, length:', finalCode.length);
+
+      const pkceVerifier = this.homey.settings.get('pkceVerifier');
+      const api = new BoschEBikeApi({});
+
+      try {
+        const tokens = await api.exchangeCodeForToken(finalCode, pkceVerifier || null);
+        this.log('Repair: token exchange successful');
+
+        // Save new tokens to the device
+        await device.setStoreValue('accessToken',  tokens.accessToken);
+        await device.setStoreValue('refreshToken', tokens.refreshToken);
+        await device.setStoreValue('expiresAt',    tokens.expiresAt);
+
+        // Clear verifier
+        if (pkceVerifier) await this.homey.settings.unset('pkceVerifier');
+
+        // Re-init API and poll
+        device._initApi();
+        await device._pollStatus();
+        device.setAvailable();
+
+        return true;
+      } catch(err) {
+        this.log('Repair: token exchange failed:', err.message);
+        throw new Error('Authentication failed: ' + err.message);
+      }
+    });
+
+    session.setHandler('disconnect', async () => {
+      this.log('Repair session disconnected');
+    });
+  }
+
+  async onPair(session) {
+    let api          = null;
+    let tokens       = null;
+    let pkceVerifier = null;
+
+    api = new BoschEBikeApi({});
+
+    // Pre-build the auth URL so it's ready when the user opens the pair view
+    const { url: authUrl, verifier } = await api.buildAuthorizationUrl();
+    pkceVerifier = verifier;
+    this.log('Auth URL ready:', authUrl);
+
+    session.setHandler('login', async ({ username, password }) => {
+      const code = (password || '').trim();
+
+      if (!code) {
+        throw new Error('Go to the Bosch eBike app settings, open the login URL, sign in, then paste the code here.');
+      }
+
+      // Extract code if user pasted full URL
+      let finalCode = code;
+      if (code.includes('code=')) {
+        try {
+          const urlObj = new URL(code.replace('onebikeapp-ios://', 'https://app/'));
+          finalCode = urlObj.searchParams.get('code') || code;
+        } catch(e) {
+          const match = code.match(/[?&]code=([^&]+)/);
+          if (match) finalCode = match[1];
+        }
+      }
+      try { finalCode = decodeURIComponent(finalCode); } catch(e) {}
+
+      // Read verifier saved by settings page
+      const pkceVerifier = this.homey.settings.get('pkceVerifier');
+      this.log('Code length:', finalCode.length);
+      this.log('Verifier:', pkceVerifier ? 'found' : 'missing');
+
+      api = new BoschEBikeApi({});
+
+      try {
+        tokens = await api.exchangeCodeForToken(finalCode, pkceVerifier || null);
+        this.log('Token exchange successful');
+        await this.homey.settings.unset('pkceVerifier');
+        return true;
+      } catch(err) {
+        this.log('Token exchange failed:', err.message);
+        throw new Error(err.message);
+      }
+    });
+
+    session.setHandler('list_devices', async () => {
+      if (!tokens) throw new Error('Not authenticated yet.');
+
+      const bikes = await api.listBikes();
+      this.log('Bikes found:', bikes ? bikes.length : 0);
+
+      if (!bikes || bikes.length === 0) {
+        throw new Error('No eBikes found. Make sure your bike is registered in the Bosch Flow app.');
+      }
+
+      return bikes.map((bike) => ({
+        name: BoschEBikeApi.parseBikeName(bike),
+        data: { id: bike.id || bike.bikeId },
+        store: {
+          accessToken:  tokens.accessToken,
+          refreshToken: tokens.refreshToken,
+          expiresAt:    tokens.expiresAt,
+        },
+      }));
+    });
+  }
+
+  // ── Convenience trigger helpers (called from Device) ──────────────────────
+
+  async triggerChargingStarted(device) {
+    return this.chargingStartedTrigger.trigger(device);
+  }
+
+  async triggerChargingStopped(device) {
+    return this.chargingStoppedTrigger.trigger(device);
+  }
+
+  async triggerBatteryBelow(device, batteryPct) {
+    return this.batteryBelowTrigger.trigger(device, {}, { battery: batteryPct });
+  }
+
+  async triggerNewRide(device, tokens) {
+    return this.newRideTrigger.trigger(device, tokens);
+  }
+}
+
+module.exports = EBikeDriver;
+

@@ -1,0 +1,38 @@
+{
+  "id": "com.bosch.ebike",
+  "version": "1.0.0",
+  "compatibility": ">=12.0.0",
+  "sdk": 3,
+  "platforms": [
+    "local"
+  ],
+  "name": {
+    "en": "Bosch eBike"
+  },
+  "description": {
+    "en": "Monitor your Bosch Smart System eBike in Homey"
+  },
+  "tags": {
+    "en": [
+      "bosch",
+      "ebike",
+      "bicycle",
+      "smart system",
+      "battery",
+      "cycling"
+    ]
+  },
+  "category": [
+    "appliances"
+  ],
+  "permissions": [],
+  "images": {
+    "small": "/assets/images/small.png",
+    "large": "/assets/images/large.png",
+    "xlarge": "/assets/images/xlarge.png"
+  },
+  "author": {
+    "name": "",
+    "email": ""
+  }
+}

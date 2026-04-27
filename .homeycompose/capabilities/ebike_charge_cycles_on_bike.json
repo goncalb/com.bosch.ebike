@@ -1,0 +1,16 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Charge Cycles (On Bike)"
+  },
+  "uiComponent": "sensor",
+  "getable": true,
+  "setable": false,
+  "insights": false,
+  "icon": "/assets/capabilities/battery.svg",
+  "units": {
+    "en": ""
+  },
+  "min": 0,
+  "decimals": 1
+}

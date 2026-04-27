@@ -1,0 +1,301 @@
+[
+  {
+    "type": "group",
+    "label": {
+      "en": "Connection"
+    },
+    "children": [
+      {
+        "id": "auth_code",
+        "type": "text",
+        "label": {
+          "en": "Authorization Code"
+        },
+        "hint": {
+          "en": "Paste a new authorization code here and tap Save to re-authenticate. Leave empty to keep existing authentication."
+        },
+        "value": ""
+      }
+    ]
+  },
+  {
+    "type": "group",
+    "label": {
+      "en": "Bike"
+    },
+    "children": [
+      {
+        "id": "hw_bike_brand",
+        "type": "label",
+        "label": {
+          "en": "Brand"
+        },
+        "value": ""
+      },
+      {
+        "id": "hw_bike_category",
+        "type": "label",
+        "label": {
+          "en": "Category"
+        },
+        "value": ""
+      },
+      {
+        "id": "hw_bike_oem_id",
+        "type": "label",
+        "label": {
+          "en": "Frame ID"
+        },
+        "value": ""
+      },
+      {
+        "id": "hw_bike_gearing",
+        "type": "label",
+        "label": {
+          "en": "Gearing"
+        },
+        "value": ""
+      }
+    ]
+  },
+  {
+    "type": "group",
+    "label": {
+      "en": "Battery"
+    },
+    "children": [
+      {
+        "id": "hw_batt_name",
+        "type": "label",
+        "label": {
+          "en": "Model"
+        },
+        "value": ""
+      },
+      {
+        "id": "hw_batt_serial",
+        "type": "label",
+        "label": {
+          "en": "Serial Number"
+        },
+        "value": ""
+      },
+      {
+        "id": "hw_batt_firmware",
+        "type": "label",
+        "label": {
+          "en": "Firmware"
+        },
+        "value": ""
+      },
+      {
+        "id": "hw_batt_hardware",
+        "type": "label",
+        "label": {
+          "en": "Hardware"
+        },
+        "value": ""
+      },
+      {
+        "id": "hw_batt_part",
+        "type": "label",
+        "label": {
+          "en": "Part Number"
+        },
+        "value": ""
+      },
+      {
+        "id": "hw_batt_mfg_date",
+        "type": "label",
+        "label": {
+          "en": "Manufacturing Date"
+        },
+        "value": ""
+      }
+    ]
+  },
+  {
+    "type": "group",
+    "label": {
+      "en": "Motor"
+    },
+    "children": [
+      {
+        "id": "hw_motor_name",
+        "type": "label",
+        "label": {
+          "en": "Model"
+        },
+        "value": ""
+      },
+      {
+        "id": "hw_motor_line",
+        "type": "label",
+        "label": {
+          "en": "Product Line"
+        },
+        "value": ""
+      },
+      {
+        "id": "hw_motor_serial",
+        "type": "label",
+        "label": {
+          "en": "Serial Number"
+        },
+        "value": ""
+      },
+      {
+        "id": "hw_motor_firmware",
+        "type": "label",
+        "label": {
+          "en": "Firmware"
+        },
+        "value": ""
+      },
+      {
+        "id": "hw_motor_hardware",
+        "type": "label",
+        "label": {
+          "en": "Hardware"
+        },
+        "value": ""
+      },
+      {
+        "id": "hw_motor_part",
+        "type": "label",
+        "label": {
+          "en": "Part Number"
+        },
+        "value": ""
+      },
+      {
+        "id": "hw_motor_mfg_date",
+        "type": "label",
+        "label": {
+          "en": "Manufacturing Date"
+        },
+        "value": ""
+      }
+    ]
+  },
+  {
+    "type": "group",
+    "label": {
+      "en": "Connect Module"
+    },
+    "children": [
+      {
+        "id": "hw_connect_name",
+        "type": "label",
+        "label": {
+          "en": "Model"
+        },
+        "value": ""
+      },
+      {
+        "id": "hw_connect_serial",
+        "type": "label",
+        "label": {
+          "en": "Serial Number"
+        },
+        "value": ""
+      },
+      {
+        "id": "hw_connect_firmware",
+        "type": "label",
+        "label": {
+          "en": "Firmware"
+        },
+        "value": ""
+      },
+      {
+        "id": "hw_connect_mfg_date",
+        "type": "label",
+        "label": {
+          "en": "Manufacturing Date"
+        },
+        "value": ""
+      }
+    ]
+  },
+  {
+    "type": "group",
+    "label": {
+      "en": "Remote / Controller"
+    },
+    "children": [
+      {
+        "id": "hw_remote_name",
+        "type": "label",
+        "label": {
+          "en": "Model"
+        },
+        "value": ""
+      },
+      {
+        "id": "hw_remote_serial",
+        "type": "label",
+        "label": {
+          "en": "Serial Number"
+        },
+        "value": ""
+      },
+      {
+        "id": "hw_remote_firmware",
+        "type": "label",
+        "label": {
+          "en": "Firmware"
+        },
+        "value": ""
+      },
+      {
+        "id": "hw_remote_mfg_date",
+        "type": "label",
+        "label": {
+          "en": "Manufacturing Date"
+        },
+        "value": ""
+      }
+    ]
+  },
+  {
+    "type": "group",
+    "label": {
+      "en": "Head Unit"
+    },
+    "children": [
+      {
+        "id": "hw_head_name",
+        "type": "label",
+        "label": {
+          "en": "Model"
+        },
+        "value": ""
+      },
+      {
+        "id": "hw_head_serial",
+        "type": "label",
+        "label": {
+          "en": "Serial Number"
+        },
+        "value": ""
+      },
+      {
+        "id": "hw_head_firmware",
+        "type": "label",
+        "label": {
+          "en": "Firmware"
+        },
+        "value": ""
+      },
+      {
+        "id": "hw_head_mfg_date",
+        "type": "label",
+        "label": {
+          "en": "Manufacturing Date"
+        },
+        "value": ""
+      }
+    ]
+  }
+]

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <script type="text/javascript" src="/homey.js" data-origin="settings"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 0; padding: 24px 20px; color: #1a1a1a; max-width: 480px; }
+    h2 { font-size: 17px; font-weight: 600; margin: 0 0 6px; }
+    h3 { font-size: 14px; font-weight: 600; margin: 0 0 8px; }
+    p { font-size: 13px; color: #555; margin: 0 0 12px; line-height: 1.5; }
+    .card { background: #f5f5f7; border-radius: 10px; padding: 14px; margin-bottom: 12px; }
+    .card-title { font-size: 13px; font-weight: 600; display: flex; align-items: center; margin-bottom: 6px; }
+    .card-num { display: inline-flex; align-items: center; justify-content: center; background: #007aff; color: #fff; border-radius: 50%; width: 22px; height: 22px; font-size: 12px; font-weight: 700; margin-right: 8px; flex-shrink: 0; }
+    .card-body { font-size: 13px; color: #555; line-height: 1.6; padding-left: 30px; }
+    .btn { display: block; width: 100%; padding: 12px; background: #007aff; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; text-align: center; margin-top: 8px; }
+    .btn.secondary { background: #e8e8ed; color: #1a1a1a; }
+    .btn.secondary:hover { background: #d8d8de; }
+    .url-box { word-break: break-all; font-size: 11px; background: #fff; border: 1px solid #d0d0d0; padding: 10px; border-radius: 8px; margin: 8px 0; line-height: 1.6; color: #555; user-select: all; }
+    .log-box { font-family: monospace; font-size: 11px; background: #1a1a1a; color: #00ff00; padding: 12px; border-radius: 8px; white-space: pre-wrap; word-break: break-all; min-height: 100px; max-height: 400px; overflow-y: auto; margin-top: 8px; user-select: text; }
+    .note { font-size: 12px; color: #888; line-height: 1.5; margin-top: 6px; }
+    code { font-size: 11px; background: #e8e8ed; padding: 2px 5px; border-radius: 4px; }
+    hr { border: none; border-top: 1px solid #eee; margin: 20px 0; }
+  </style>
+</head>
+<body>
+
+  <h2>Bosch eBike</h2>
+
+  <!-- Pairing instructions -->
+  <div class="card">
+    <div class="card-title"><span class="card-num">1</span> Open the login page</div>
+    <div class="card-body">
+      <p style="margin:0 0 8px">Use a <strong>desktop browser</strong> — not your phone.</p>
+      <div class="url-box" id="urlBox">Generating login URL...</div>
+      <button class="btn secondary" id="copyUrlBtn">📋 Copy Login URL</button>
+      <button class="btn secondary" style="margin-top:6px" id="refreshBtn">↺ Generate new URL</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="card-num">2</span> Get the code</div>
+    <div class="card-body">
+      Open <strong>Developer Tools → Network tab</strong> before clicking login. After signing in find the request starting with <code>onebikeapp-ios://</code> and copy the value after <code>code=</code>.
+      <p class="note">Chrome/Edge: F12 → Network → find onebikeapp-ios → copy code= value. Code expires in ~60 seconds.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="card-num">3</span> Use the code</div>
+    <div class="card-body">
+      <p style="margin:0 0 6px"><strong>Adding a new bike:</strong> Go to <strong>Devices → + → Bosch eBike</strong> and paste the code into the Authorization Code field.</p>
+      <p style="margin:0"><strong>Re-authenticating:</strong> Tap your existing device → ⚙️ Settings → paste the code into <strong>New Authorization Code</strong> → Save.</p>
+    </div>
+  </div>
+  <hr />
+
+  <!-- Debug section -->
+  <h3>🔧 Debug Log</h3>
+  <p>Shows the raw API response from your bike. Useful for diagnosing missing data.</p>
+  <button class="btn secondary" id="pollBtn">▶ Poll bike data now</button>
+  <button class="btn secondary" style="margin-top:6px" id="copyBtn">📋 Copy log</button>
+  <button class="btn secondary" style="margin-top:6px" id="clearBtn">✕ Clear log</button>
+  <div class="log-box" id="logBox">Tap "Poll bike data now" to fetch latest data...</div>
+
+  <script>
+    function onHomeyReady(Homey) {
+      Homey.ready();
+
+      // ── URL generation ─────────────────────────────────────────────────────
+      var authUrl = null;
+
+      function generateVerifier() {
+        var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
+        var result = '';
+        for (var i = 0; i < 64; i++) result += chars.charAt(Math.floor(Math.random() * chars.length));
+        return result;
+      }
+
+      function generateChallenge(v) {
+        return crypto.subtle.digest('SHA-256', new TextEncoder().encode(v)).then(function(hash) {
+          return btoa(String.fromCharCode.apply(null, new Uint8Array(hash)))
+            .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+        });
+      }
+
+      function generateUrl() {
+        var verifier = generateVerifier();
+        var state = Math.random().toString(36).slice(2);
+        generateChallenge(verifier).then(function(challenge) {
+          authUrl =
+            'https://p9.authz.bosch.com/auth/realms/obc/protocol/openid-connect/auth' +
+            '?client_id=one-bike-app' +
+            '&redirect_uri=' + encodeURIComponent('onebikeapp-ios://com.bosch.ebike.onebikeapp/oauth2redirect') +
+            '&response_type=code' +
+            '&scope=' + encodeURIComponent('openid offline_access') +
+            '&state=' + state +
+            '&code_challenge=' + challenge +
+            '&code_challenge_method=S256' +
+            '&kc_idp_hint=skid' +
+            '&prompt=login';
+
+          Homey.set('pkceVerifier', verifier, function() {});
+          document.getElementById('urlBox').textContent = authUrl;
+          document.getElementById('copyUrlBtn').onclick = function() {
+            navigator.clipboard.writeText(authUrl).then(function() {
+              document.getElementById('copyUrlBtn').textContent = '✓ URL Copied!';
+              setTimeout(function() {
+                document.getElementById('copyUrlBtn').textContent = '📋 Copy Login URL';
+              }, 2000);
+            }).catch(function() {
+              var ta = document.createElement('textarea');
+              ta.value = authUrl;
+              document.body.appendChild(ta);
+              ta.select();
+              document.execCommand('copy');
+              document.body.removeChild(ta);
+              document.getElementById('copyUrlBtn').textContent = '✓ URL Copied!';
+              setTimeout(function() {
+                document.getElementById('copyUrlBtn').textContent = '📋 Copy Login URL';
+              }, 2000);
+            });
+          };
+	});
+      }
+
+      document.getElementById('refreshBtn').addEventListener('click', generateUrl);
+      generateUrl();
+
+      // ── Debug log ──────────────────────────────────────────────────────────
+
+      document.getElementById('pollBtn').addEventListener('click', function() {
+        document.getElementById('logBox').textContent = 'Loading...';
+
+        Homey.get('debugLog', function(err, value) {
+          if (err) {
+            document.getElementById('logBox').textContent = 'Error: ' + err.message;
+            return;
+          }
+          if (!value) {
+            document.getElementById('logBox').textContent = 'No debug data yet.\nMake sure a device is added and wait up to 5 minutes for the first poll.';
+            return;
+          }
+          document.getElementById('logBox').textContent = value;
+        });
+      });
+
+      document.getElementById('clearBtn').addEventListener('click', function() {
+        document.getElementById('logBox').textContent = '';
+      });
+
+      document.getElementById('copyBtn').addEventListener('click', function() {
+        var text = document.getElementById('logBox').textContent;
+        if (!text) return;
+
+        navigator.clipboard.writeText(text).then(function() {
+          document.getElementById('copyBtn').textContent = '✓ Copied!';
+          setTimeout(function() {
+            document.getElementById('copyBtn').textContent = '📋 Copy log';
+          }, 2000);
+        }).catch(function() {
+          // Fallback for older browsers
+          var ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          document.getElementById('copyBtn').textContent = '✓ Copied!';
+          setTimeout(function() {
+            document.getElementById('copyBtn').textContent = '📋 Copy log';
+          }, 2000);
+        });
+      });
+    }
+  </script>
+</body>
+</html>
+

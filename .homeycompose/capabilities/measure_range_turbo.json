@@ -1,0 +1,16 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Range (Turbo)"
+  },
+  "uiComponent": "sensor",
+  "getable": true,
+  "setable": false,
+  "insights": true,
+  "icon": "/assets/capabilities/range.svg",
+  "units": {
+    "en": "km"
+  },
+  "min": 0,
+  "decimals": 0
+}

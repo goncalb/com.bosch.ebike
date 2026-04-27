@@ -1,0 +1,16 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Max Assist Speed"
+  },
+  "uiComponent": "sensor",
+  "getable": true,
+  "setable": false,
+  "insights": false,
+  "icon": "/assets/capabilities/speed.svg",
+  "units": {
+    "en": "km/h"
+  },
+  "min": 0,
+  "decimals": 1
+}

@@ -1,0 +1,13 @@
+{
+  "id": "ebike_is_charging",
+  "title": {
+    "en": "eBike !{{is|is not}} charging"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=ebike"
+    }
+  ]
+}

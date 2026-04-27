@@ -1,0 +1,108 @@
+{
+  "name": {
+    "en": "Bosch eBike"
+  },
+  "class": "other",
+  "capabilities": [
+    "measure_battery",
+    "ebike_charging",
+    "ebike_battery_energy_remaining",
+    "ebike_battery_capacity",
+    "meter_distance",
+    "ebike_charge_cycles",
+    "ebike_charge_cycles_on_bike",
+    "ebike_charge_cycles_off_bike",
+    "ebike_lifetime_energy",
+    "measure_range_eco",
+    "measure_range_tour",
+    "measure_range_sport",
+    "measure_range_emtb",
+    "measure_range_turbo",
+    "meter_motor_hours",
+    "ebike_motor_hours_assist",
+    "ebike_max_assist_speed",
+    "ebike_dist_off",
+    "ebike_dist_eco",
+    "ebike_dist_tour",
+    "ebike_dist_sport",
+    "ebike_dist_turbo",
+    "ebike_energy_off",
+    "ebike_energy_eco",
+    "ebike_energy_tour",
+    "ebike_energy_sport",
+    "ebike_energy_turbo"
+  ],
+  "platforms": [
+    "local"
+  ],
+  "connectivity": [
+    "cloud"
+  ],
+  "images": {
+    "small": "/assets/images/small.png",
+    "large": "/assets/images/large.png",
+    "xlarge": "/assets/images/xlarge.png"
+  },
+  "energy": {
+    "batteries": [
+      "OTHER"
+    ]
+  },
+  "pair": [
+    {
+      "id": "login_credentials",
+      "template": "login_credentials",
+      "options": {
+        "title": {
+          "en": "Connect your Bosch eBike"
+        },
+        "usernameLabel": {
+          "en": "📋 Go to app settings → Copy Login URL → open in desktop browser → sign in → copy code from Network tab (onebikeapp-ios:// request)"
+        },
+        "usernamePlaceholder": {
+          "en": ""
+        },
+        "passwordLabel": {
+          "en": "Authorization Code"
+        },
+        "passwordPlaceholder": {
+          "en": "Paste the code= value here"
+        }
+      }
+    },
+    {
+      "id": "list_devices",
+      "template": "list_devices",
+      "navigation": {
+        "next": "add_devices"
+      }
+    },
+    {
+      "id": "add_devices",
+      "template": "add_devices"
+    }
+  ],
+  "repair": [
+    {
+      "id": "login_credentials",
+      "template": "login_credentials",
+      "options": {
+        "title": {
+          "en": "Re-authenticate"
+        },
+        "usernameLabel": {
+          "en": "Instructions"
+        },
+        "usernamePlaceholder": {
+          "en": "Go to app settings → Copy Login URL → sign in → copy code"
+        },
+        "passwordLabel": {
+          "en": "Authorization Code"
+        },
+        "passwordPlaceholder": {
+          "en": "Paste the code= value from the redirect URL"
+        }
+      }
+    }
+  ]
+}
