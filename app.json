@@ -36,6 +36,7 @@
     "name": "",
     "email": ""
   },
+  "brandColor": "#E20015",
   "flow": {
     "triggers": [
       {

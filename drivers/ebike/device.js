@@ -116,7 +116,10 @@ class EBikeDevice extends Homey.Device {
       accessToken,
       refreshToken,
       expiresAt,
-      onTokenRefresh: (tokens) => this._saveTokens(tokens),
+      onTokenRefresh: (tokens) => {
+        this._saveTokens(tokens);
+        this.homey.app.saveAuthLog('Token refreshed for ' + this.getName()).catch(() => {});
+      },
     });
   }
 
