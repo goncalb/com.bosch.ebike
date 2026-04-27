@@ -2,25 +2,21 @@
 
 A [Homey Pro](https://homey.app) app to monitor your **Bosch Smart System eBike** — battery, range, motor stats, per-mode riding statistics, and full hardware details — all inside Homey.
 
-> ⚠️ This app uses a reverse-engineered private API and is not officially supported or endorsed by Bosch eBike Systems. Use at your own risk.
-
 -----
 
-## Screenshots
+## ⚠️ Important Disclaimer
 
-<!-- Add your screenshots to a /screenshots folder in this repo and they will show here -->
-
-![Device overview](screenshots/device-overview.png)
-*The eBike device tile showing battery, range and bike photo*
-
-![Capabilities list](screenshots/capabilities.png)
-*All available capabilities visible in the device page*
-
-![Advanced settings](screenshots/advanced-settings.png)
-*Advanced Settings showing full hardware component details*
-
-![Settings page](screenshots/settings-setup.png)
-*The Setup tab in app settings where you generate your login URL*
+> **This app is not officially supported, endorsed, or affiliated with Bosch eBike Systems in any way.**
+> 
+> The Bosch Smart System does not currently offer a public API for third-party integrations. This app works by using the same private API used by the official **Bosch Flow / One Bike App** (also known as One Bike App). This approach was reverse-engineered by the community and is used here as a workaround until an official API becomes available.
+> 
+> **What this means for you:**
+> 
+> - Bosch may change or disable this API at any time without notice, which could break the app
+> - Your Bosch account credentials are used only for authentication — no data is stored outside of your Homey
+> - Use at your own risk
+> 
+> If Bosch ever releases an official public API, this app will be updated to use it.
 
 -----
 
@@ -42,8 +38,27 @@ A [Homey Pro](https://homey.app) app to monitor your **Bosch Smart System eBike*
 ## Requirements
 
 - Homey Pro (SDK3 — tested on Homey Pro 2023)
-- A Bosch Smart System eBike registered in the Bosch Flow / One Bike App
-- A desktop computer or laptop browser (for the one-time login step)
+- A Bosch Smart System eBike registered in the **Bosch Flow / One Bike App**
+- A **desktop computer or laptop** with Chrome or Firefox (required for the one-time login step — a mobile browser will not work)
+- Your Bosch account login credentials
+
+-----
+
+## Screenshots
+
+<!-- Add your screenshots to a /screenshots folder in this repo -->
+
+![Device overview](screenshots/device-overview.png)
+*The eBike device tile showing battery, range and bike photo*
+
+![Capabilities list](screenshots/capabilities.png)
+*All available capabilities visible in the device page*
+
+![Advanced settings](screenshots/advanced-settings.png)
+*Advanced Settings showing full hardware component details*
+
+![Settings page](screenshots/settings-setup.png)
+*The Setup tab in app settings where you generate your login URL*
 
 -----
 
@@ -53,111 +68,125 @@ A [Homey Pro](https://homey.app) app to monitor your **Bosch Smart System eBike*
 
 > 📸 *Add screenshot: Homey app store listing*
 
-At the moment this app is not yet on the official Homey App Store. To install it:
+This app is not yet on the official Homey App Store. To install it:
 
 1. Download or clone this repository to your computer
-1. Install the [Homey CLI](https://apps.developer.homey.app/the-basics/getting-started) (`npm install -g homey`)
+1. Install the [Homey CLI](https://apps.developer.homey.app/the-basics/getting-started) — requires Node.js:
+   
+   ```
+   npm install -g homey
+   ```
 1. Open a terminal in the downloaded folder
-1. Run `homey app install` — this installs the app to your Homey Pro
+1. Run:
+   
+   ```
+   homey app install
+   ```
 
-Once the app is published to the App Store, you will be able to install it directly from the Homey app by searching for **Bosch eBike**.
+Once published to the App Store, you will be able to install it directly from the Homey app by searching for **Bosch eBike**.
 
 -----
 
 ## Adding Your Bike — Step by Step
 
-Authentication with Bosch requires a one-time login through a desktop browser. This is because Bosch uses a secure login system (OAuth2 PKCE) that cannot be done entirely inside Homey.
+Because Bosch does not offer a public API, authentication requires a **one-time manual step** through a desktop browser. This is a workaround to obtain the authorization token that Homey needs to communicate with the Bosch cloud on your behalf.
 
-You only need to do this once, or if your login session expires.
+> ⚠️ **This step cannot be completed on a mobile phone.** You need a desktop or laptop browser with Developer Tools (Chrome or Firefox). This is a known limitation of the workaround approach.
+
+You only need to do this once per Homey installation, or when your session expires (which is rare with the `offline_access` token scope).
 
 -----
 
-### Step 2 — Generate your login URL
+### Step 2 — Generate your Login URL
+
+The app generates a unique, secure login URL for your Bosch account using PKCE (a secure OAuth2 method). You need to copy this URL to your desktop browser.
 
 1. Open the **Homey** app on your phone
 1. Go to **More → Apps → Bosch eBike → Settings**
 
 > 📸 *Add screenshot: Homey app → More → Apps*
 
-> 📸 *Add screenshot: Bosch eBike app settings page — Setup tab*
-
-1. On the **Setup** tab you will see a generated **Login URL**
-1. Tap the **Copy** button to copy it to your clipboard
+1. You will see the **Setup** tab with a generated **Login URL**
+1. Tap **Copy** to copy the URL to your clipboard
 
 > 📸 *Add screenshot: Setup tab with Login URL and Copy button*
 
 -----
 
-### Step 3 — Sign in on your desktop browser
+### Step 3 — Sign in and capture the authorization code
 
-1. On your **desktop computer or laptop**, open a browser (Chrome or Firefox recommended)
-1. Open the **Developer Tools**:
-- Chrome: press `F12` or right-click anywhere on the page → **Inspect**
-- Firefox: press `F12`
-1. Click the **Network** tab inside Developer Tools
+This is the trickiest step. Because the Bosch login redirects to a mobile deep link (`onebikeapp-ios://`) that desktop browsers cannot open, you need to intercept the redirect using Developer Tools.
+
+1. On your **desktop computer**, open **Chrome** or **Firefox**
+1. Open **Developer Tools**:
+- **Chrome**: press `F12`, or right-click anywhere → **Inspect**
+- **Firefox**: press `F12`
+1. Click the **Network** tab in Developer Tools
+1. Make sure recording is active (red dot in Chrome, or pause button not active in Firefox)
 
 > 📸 *Add screenshot: Chrome DevTools open on Network tab*
 
-1. Paste the Login URL into the browser address bar and press Enter
-1. You will see the **Bosch account login page** — sign in with your Bosch / One Bike App email and password
+1. Paste the Login URL into the browser address bar and press **Enter**
+1. The Bosch account login page will appear — sign in with your Bosch / One Bike App email and password
 
 > 📸 *Add screenshot: Bosch login page*
 
-1. After signing in, the browser will try to open a link starting with `onebikeapp-ios://` — it **cannot** open this link, and that is completely normal and expected
-1. In the **Network tab**, look for a request that starts with `onebikeapp-ios://` — click on it
+1. After a successful login, the browser will **attempt to open** a link starting with `onebikeapp-ios://` — this will fail with an error in the browser, which is **completely normal and expected**
+1. In the **Network tab**, look for a request that starts with `onebikeapp-ios://` — it will appear in the list. Click on it.
 
 > 📸 *Add screenshot: Network tab showing the onebikeapp-ios:// request*
 
-1. The full URL will look something like:
+1. The full URL in the request will look like this:
    
    ```
    onebikeapp-ios://com.bosch.ebike.onebikeapp/oauth2redirect?code=XXXXXXXXXXXXXXXX&state=...
    ```
-1. Copy everything after `code=` and before the next `&` — that is your **authorization code**
+1. Copy the value after `code=` and before the next `&` — that is your **authorization code**
 
 > 📸 *Add screenshot: The code= value highlighted in the URL*
+
+> 💡 **Tip:** The code is a long string of random characters. Copy only the code itself, not the `code=` prefix or anything after the `&`.
 
 -----
 
 ### Step 4 — Add your bike in Homey
 
 1. Open the **Homey** app on your phone
-1. Go to **Devices → + → Add Device → Bosch eBike**
+1. Go to **Devices → +** → search for **Bosch eBike** → tap it
 
 > 📸 *Add screenshot: Add device screen showing Bosch eBike*
 
-1. On the pairing screen, the top section shows a reminder of the instructions
+1. On the pairing screen you will see a reminder of the instructions
 1. In the **Authorization Code** field, paste the code you copied in Step 3
 
 > 📸 *Add screenshot: Pairing screen with Authorization Code field*
 
-1. Tap **Next** — Homey will connect to Bosch and retrieve your bike(s)
+1. Tap **Next** — Homey will connect to Bosch and retrieve your registered bike(s)
 1. Select the bike(s) you want to add and tap **Add**
 
 > 📸 *Add screenshot: Bike selection screen*
 
-Your bike will now appear as a device in Homey and will start polling within 5 minutes. The device tile will show your bike’s photo automatically.
+Your bike will now appear as a device in Homey. The bike photo and all data will appear within 5 minutes on the first poll.
 
 -----
 
 ## Re-Authentication
 
-Tokens expire after a period of inactivity. If your bike stops updating, you need to re-authenticate.
+Tokens use `offline_access` scope and last a long time. However if your bike stops updating, re-authentication is needed.
 
 **Option A — Via Advanced Settings (quickest, no re-pairing needed):**
 
-1. Open the device page → tap **⚙️ Settings** → tap **Advanced Settings**
-1. Generate a new login URL from **App Settings → Setup tab**
-1. Follow Steps 2–3 again to get a fresh authorization code
+1. Follow Steps 2–3 above to get a new authorization code
+1. Open the device → **Settings → Advanced Settings → Connection**
 1. Paste the new code into the **Authorization Code** field
-1. Tap Save
+1. Tap **Save**
 
 > 📸 *Add screenshot: Advanced Settings showing Authorization Code field*
 
-**Option B — Via Repair:**
+**Option B — Via Repair (full re-pairing):**
 
-1. Long-press the device tile → tap **⋮** → **Repair**
-1. Follow the full pairing flow again (Steps 2–4)
+1. Long-press the device tile → **⋮** → **Repair**
+1. Follow the full pairing flow (Steps 2–4)
 1. The device stays in place — only the tokens are updated
 
 -----
@@ -179,8 +208,6 @@ Tokens expire after a period of inactivity. If your bike stops updating, you nee
 
 ### Range Estimates
 
-Estimated remaining range at current battery level, per assist mode:
-
 |Capability |Assist Mode|
 |-----------|-----------|
 |Range Eco  |Eco        |
@@ -197,92 +224,68 @@ Estimated remaining range at current battery level, per assist mode:
 |Motor Hours (Assist)|Hours the motor was actively assisting|
 |Max Assist Speed    |Speed limit for motor assist (km/h)   |
 
-### Per-Mode Distance
+### Per-Mode Distance & Energy
 
-Cumulative distance ridden in each assist mode: **Off / Eco / Tour / Sport / Turbo**
-
-### Per-Mode Energy Consumption
-
-Cumulative energy used in each assist mode: **Off / Eco / Tour / Sport / Turbo**
+Cumulative distance and energy consumption per assist mode: **Off / Eco / Tour / Sport / Turbo**
 
 -----
 
-## Advanced Settings (Hardware Info)
+## Advanced Settings
 
-When you open a device and tap **Settings → Advanced Settings**, you will see full hardware information pulled automatically from the Bosch API:
+Open device → **Settings → Advanced Settings** to see:
 
-**Connection**
+**Connection** — paste a new Authorization Code to re-authenticate
 
-- Authorization Code — paste here to re-authenticate without re-pairing
+**Bike** — Brand, Category, Frame ID, Gearing system
 
-**Bike**
+**Battery** — Model, Serial, Firmware, Hardware, Part Number, Manufacturing Date
 
-- Brand, Category, Frame ID, Gearing system
+**Motor** — Model, Product Line, Serial, Firmware, Hardware, Part Number, Manufacturing Date
 
-**Battery**
+**Connect Module** — Model, Serial, Firmware, Manufacturing Date
 
-- Model, Serial Number, Firmware, Hardware version, Part Number, Manufacturing Date
+**Remote / Controller** — Model, Serial, Firmware, Manufacturing Date
 
-**Motor**
+**Head Unit** *(if fitted)* — Model, Serial, Firmware, Manufacturing Date
 
-- Model, Product Line, Serial Number, Firmware, Hardware version, Part Number, Manufacturing Date
-
-**Connect Module**
-
-- Model, Serial Number, Firmware, Manufacturing Date
-
-**Remote / Controller**
-
-- Model, Serial Number, Firmware, Manufacturing Date
-
-**Head Unit** (if fitted)
-
-- Model, Serial Number, Firmware, Manufacturing Date
-
-All fields are populated automatically after the first poll and updated on every subsequent poll.
+All fields populate automatically on the first poll.
 
 -----
 
-## Using Flows
+## Flows
 
-All numeric capabilities can be used in **Homey Flows** as triggers or conditions. Some examples:
+**Custom trigger cards:**
 
-**Get notified when battery is low:**
+- eBike charging started
+- eBike charging stopped
+- eBike battery drops below X%
 
-> When `Battery (%)` drops below `20` → Send notification “Charge your eBike!”
+**Custom condition cards:**
 
-**Track when charging completes:**
+- eBike is / is not charging
+- eBike battery is above / below X%
 
-> When `Charging` changes to `false` → Send notification “eBike fully charged”
-
-**Daily range check:**
-
-> Every morning at 08:00 → Read `Range Eco` → Announce on Homey speaker
-
-**Log your riding:**
-
-> When `Odometer` changes → Log to a Google Sheet
+All numeric capabilities also automatically generate “becomes greater/less than” flow cards.
 
 -----
 
 ## App Settings & Debug
 
-Open **More → Apps → Bosch eBike → Settings** to access:
+Open **More → Apps → Bosch eBike → Settings**:
 
-**Setup tab** — generate your login URL and find pairing instructions
+**Setup tab** — login URL generator with Copy button and step-by-step instructions
 
-**Debug tab** — shows a live log of the last API poll for each bike, useful for troubleshooting. Use **Refresh** to load the latest entries and **Clear** to reset the log.
-
-> 📸 *Add screenshot: Debug tab with log entries*
+**Debug tab** — live log of the last API poll per bike. Use **Refresh** to reload and **Clear** to reset.
 
 -----
 
 ## Known Limitations
 
-- **No ride history** — the Bosch cloud API does not expose individual ride data to third-party apps
-- **5-minute polling** — data is not real-time; it reflects the state at the last poll
-- **Desktop browser required** for initial login — the authorization code cannot be captured on a mobile browser
-- **Unofficial API** — Bosch may change or restrict the API at any time without notice
+- **Unofficial API** — Bosch may change or disable access at any time. This is the fundamental limitation of this approach.
+- **No ride history** — the Bosch API does not expose individual ride data to third-party clients
+- **5-minute polling** — data reflects the state at the last poll, not real-time
+- **Desktop browser required** for initial authentication — the authorization code cannot be captured on mobile
+- **One Bike App must be set up** — your bike must already be registered in the official Bosch Flow / One Bike App before pairing with Homey
 
 -----
 
@@ -293,59 +296,57 @@ Open **More → Apps → Bosch eBike → Settings** to access:
 - OAuth2 PKCE authentication via Bosch Flow app credentials
 - Battery state of charge (%) polling
 - Device pairing using Homey `login_credentials` template
-- Two Canyon eBikes successfully added and polling
 
 ### v0.2.0 — Battery details
 
-- Added remaining energy (Wh) from `remainingEnergyForRider` field
-- Fixed unit conversion: `remainingEnergyForRider / 10` gives correct Wh value
-- Added battery capacity, charge cycles (total / on-bike / off-bike), and lifetime energy
+- Remaining energy (Wh), battery capacity, charge cycles, lifetime energy
+- Fixed unit conversion: `remainingEnergyForRider / 10` = correct Wh value
 
 ### v0.3.0 — Range & odometer
 
-- Added per-mode range estimates (Eco, Tour/eMTB, Sport, Turbo) from `reachableRange` API array
-- Added odometer in km (`odometer / 1000`)
-- Added motor hours (total and assist-active)
-- Added max assist speed
-- Added charging status indicator
+- Per-mode range estimates (Eco, Tour/eMTB, Sport, Turbo)
+- Odometer, motor hours (total and assist), max assist speed
+- Charging status indicator
 
 ### v0.4.0 — Per-mode statistics
 
-- Added cumulative per-assist-mode distance (Off / Eco / Tour / Sport / Turbo)
-- Added cumulative per-assist-mode energy consumption
-- Source: `driveUnitAssistModes[0–4]` from bike profile response (0=Off, 1=Eco, 2=Tour, 3=Sport, 4=Turbo)
+- Cumulative distance and energy per assist mode (Off / Eco / Tour / Sport / Turbo)
+- Source: `driveUnitAssistModes[0–4]` from bike profile API
 
 ### v0.5.0 — Capability cleanup & migration
 
-- Removed unused last ride, total stats, and next service capabilities
-- Added automatic capability migration on device init (`addCapability` / `removeCapability`)
-- Fixed capability naming: underscores instead of dots (Homey SDK3 requirement)
+- Removed unused capabilities, added automatic migration on device init
+- Fixed capability naming convention (underscores, no dots)
 
 ### v0.6.0 — Pairing & repair improvements
 
-- Added **Repair** option via device menu for re-authentication without removing the device
-- Added **Authorization Code** field in Advanced Settings for quick token refresh
-- Removed unreliable custom HTML pair step — reverted to standard Homey credentials template
+- Repair option via device menu
+- Re-authentication without removing device
 
-### v0.7.0 — App settings page & debug logging
+### v0.7.0 — App settings & debug logging
 
-- Added tabbed settings page (Setup / Debug)
-- Setup tab: PKCE login URL generator with one-tap Copy and step-by-step instructions
-- Debug tab: live log viewer with Refresh, Copy, and Clear buttons
-- Debug logging captures raw parsed API values per poll
+- Tabbed settings page (Setup / Debug)
+- PKCE URL generator with Copy button
+- Live debug log viewer
 
 ### v0.8.0 — Icons & polish
 
-- SVG icons added for all 27 capabilities
-- App icons added (small / large / xlarge)
-- Capability titles and units reviewed and corrected
+- SVG icons for all 27 capabilities
+- App brand color set to Bosch red (#E20015)
 
 ### v0.9.0 — Hardware info & bike photo
 
-- Added bike photo as device tile camera image (from Bosch CDN)
-- Added full hardware details in Advanced Settings: battery, motor, connect module, remote, head unit
-- Hardware fields: model, serial number, firmware, hardware version, part number, manufacturing date
-- Migrated to Homey Compose structure (`driver.settings.compose.json`) for proper Advanced Settings support
+- Bike photo as device tile camera image
+- Full hardware details in Advanced Settings
+- Migrated to Homey Compose (`driver.settings.compose.json`)
+
+### v1.0.0 — Debug improvements & polish
+
+- Split debug log into two sections: poll data (overwrites each poll) and auth events (last 20)
+- Updated setup instructions — corrected re-auth path to Advanced Settings → Connection
+- Added 60-second code expiry warning to setup page
+- Brand color set to Bosch red (#E20015) throughout UI
+- Migrated to Homey Compose structure for proper Advanced Settings support
 
 -----
 
@@ -353,52 +354,51 @@ Open **More → Apps → Bosch eBike → Settings** to access:
 
 ```
 com.bosch.ebike/
-├── app.js                      # App entry point, debug logging
-├── app.json                    # Generated app manifest (do not edit)
+├── app.js                          # App entry point, debug logging
+├── app.json                        # Generated manifest (do not edit directly)
 ├── package.json
 ├── .homeycompose/
-│   ├── app.json                # App manifest source (edit this)
-│   └── capabilities/           # One JSON file per custom capability
+│   ├── app.json                    # App manifest source (edit this)
+│   ├── capabilities/               # One JSON file per custom capability
+│   └── flow/                       # Flow triggers and conditions
 ├── settings/
-│   └── index.html              # App settings UI (Setup + Debug tabs)
+│   └── index.html                  # App settings UI (Setup + Debug tabs)
 ├── assets/
 │   ├── icon.svg
-│   ├── images/                 # App store icons
-│   └── capabilities/           # SVG icon per capability
+│   ├── images/                     # App store icons
+│   └── capabilities/               # SVG icon per capability
 ├── lib/
-│   ├── BoschEBikeApi.js        # API client, PKCE token exchange, response parsing
-│   └── constants.js            # Capability name constants
+│   ├── BoschEBikeApi.js            # API client, PKCE, token exchange, parsing
+│   └── constants.js                # Capability name constants
 └── drivers/ebike/
-    ├── driver.compose.json     # Driver manifest (Homey Compose)
-    ├── driver.settings.compose.json  # Advanced Settings definition
-    ├── driver.js               # Pairing wizard, repair, token exchange
-    └── device.js               # Polling loop, capability updates, token refresh
+    ├── driver.compose.json         # Driver manifest (Homey Compose)
+    ├── driver.settings.compose.json # Advanced Settings definition
+    ├── driver.js                   # Pairing, repair, token exchange
+    └── device.js                   # Polling, capability updates, token refresh
 ```
 
 -----
 
 ## Related Projects
 
-This app would not exist without the prior work of others who reverse-engineered the Bosch eBike API:
+- **[hass-bosch-ebike](https://github.com/Phil-Barker/hass-bosch-ebike)** by Phil Barker — Home Assistant integration for Bosch Smart System eBikes. The starting point that revealed the API endpoints, authentication flow, and data structure used in this app. If you use Home Assistant, check it out.
 
-- **[hass-bosch-ebike](https://github.com/Phil-Barker/hass-bosch-ebike)** by Phil Barker — Home Assistant integration for Bosch Smart System eBikes. This was the starting point that revealed the API endpoints, authentication flow, and data structure used in this app. If you use Home Assistant instead of (or alongside) Homey, check it out.
-
-This app was designed and built in collaboration with **[Claude](https://claude.ai)** (Anthropic) — from API exploration and other bits here and there.
+This app was designed and built in collaboration with **[Claude](https://claude.ai)** (Anthropic).
 
 -----
 
 ## Contributing
 
-Pull requests are welcome. If you own a Bosch Smart System eBike and want to help test, report bugs, or suggest features, please open an issue to discuss first.
-
-Especially welcome:
+Pull requests welcome. Especially:
 
 - Testing with different battery models (PowerTube 400, 500, 625, 750)
 - Testing with different motor generations (Performance Line, CX, Cargo Line)
-- Translations (Homey supports `.json` locale files per language)
+- Translations
+
+Please open an issue to discuss before submitting a pull request.
 
 -----
 
 ## License
 
-[MIT License](LICENSE) — free to use, copy, modify, and distribute. No warranty provided.
+[MIT License](LICENSE) — free to use, copy, modify, distribute. No warranty provided.
