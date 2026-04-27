@@ -39,9 +39,9 @@
     "cloud"
   ],
   "images": {
-    "small": "/assets/images/small.png",
-    "large": "/assets/images/large.png",
-    "xlarge": "/assets/images/xlarge.png"
+    "small": "/drivers/ebike/assets/images/small.png",
+    "large": "/drivers/ebike/assets/images/large.png",
+    "xlarge": "/drivers/ebike/assets/images/xlarge.png"
   },
   "energy": {
     "batteries": [
