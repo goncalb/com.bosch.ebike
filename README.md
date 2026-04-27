@@ -348,6 +348,11 @@ Open **More → Apps → Bosch eBike → Settings**:
 - Brand color set to Bosch red (#E20015) throughout UI
 - Migrated to Homey Compose structure for proper Advanced Settings support
 
+### v1.0.1 — Metadata update, no code changes
+
+- Added source code into app.json
+- Simple version bump
+
 -----
 
 ## Project Structure
