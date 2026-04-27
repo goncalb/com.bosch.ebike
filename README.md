@@ -62,31 +62,6 @@ A [Homey Pro](https://homey.app) app to monitor your **Bosch Smart System eBike*
 
 -----
 
-## Installation
-
-### Step 1 — Install the app on Homey
-
-> 📸 *Add screenshot: Homey app store listing*
-
-This app is not yet on the official Homey App Store. To install it:
-
-1. Download or clone this repository to your computer
-1. Install the [Homey CLI](https://apps.developer.homey.app/the-basics/getting-started) — requires Node.js:
-   
-   ```
-   npm install -g homey
-   ```
-1. Open a terminal in the downloaded folder
-1. Run:
-   
-   ```
-   homey app install
-   ```
-
-Once published to the App Store, you will be able to install it directly from the Homey app by searching for **Bosch eBike**.
-
------
-
 ## Adding Your Bike — Step by Step
 
 Because Bosch does not offer a public API, authentication requires a **one-time manual step** through a desktop browser. This is a workaround to obtain the authorization token that Homey needs to communicate with the Bosch cloud on your behalf.
@@ -97,7 +72,7 @@ You only need to do this once per Homey installation, or when your session expir
 
 -----
 
-### Step 2 — Generate your Login URL
+### Step 1 — Generate your Login URL
 
 The app generates a unique, secure login URL for your Bosch account using PKCE (a secure OAuth2 method). You need to copy this URL to your desktop browser.
 
@@ -113,7 +88,7 @@ The app generates a unique, secure login URL for your Bosch account using PKCE (
 
 -----
 
-### Step 3 — Sign in and capture the authorization code
+### Step 2 — Sign in and capture the authorization code
 
 This is the trickiest step. Because the Bosch login redirects to a mobile deep link (`onebikeapp-ios://`) that desktop browsers cannot open, you need to intercept the redirect using Developer Tools.
 
@@ -149,7 +124,7 @@ This is the trickiest step. Because the Bosch login redirects to a mobile deep l
 
 -----
 
-### Step 4 — Add your bike in Homey
+### Step 3 — Add your bike in Homey
 
 1. Open the **Homey** app on your phone
 1. Go to **Devices → +** → search for **Bosch eBike** → tap it
