@@ -5,7 +5,15 @@ A [Homey Pro](https://homey.app) app to monitor your **Bosch Smart System eBike*
 -----
 
 ## ⚠️ Important Disclaimer
-
+> 
+> This integration requires:
+>
+> - **ConnectModule** hardware installed on your bike (sold separately, ~€100-150)
+> - **Bosch eBike Flow+** subscription (~€30-50/year)
+> - **Bosch eBike Flow** app (Gen 4 and up)
+>
+> **This will NOT work with older Bosch eBike Connect app (Gen 3 and below).**
+> 
 > **This app is not officially supported, endorsed, or affiliated with Bosch eBike Systems in any way.**
 > 
 > The Bosch Smart System does not currently offer a public API for third-party integrations. This app works by using the same private API used by the official **Bosch Flow / One Bike App** (also known as One Bike App). This approach was reverse-engineered by the community and is used here as a workaround until an official API becomes available.
