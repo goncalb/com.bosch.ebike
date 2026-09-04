@@ -59,21 +59,18 @@ A [Homey Pro](https://homey.app) app to monitor your **Bosch Smart System eBike*
 
 -----
 
-## Screenshots
+## Widgets Preview
 
-<!-- Add your screenshots to a /screenshots folder in this repo -->
+*Illustrative previews (example data and locations):*
 
-![Device overview](screenshots/device-overview.png)
-*The eBike device tile showing battery, range and bike photo*
+![Last Ride widget](screenshots/widget-last-ride.png)
+*The Last Ride widget: GPS track, distance and ride statistics*
 
-![Capabilities list](screenshots/capabilities.png)
-*All available capabilities visible in the device page*
+![Location widget](screenshots/widget-location.png)
+*The Location widget: last known position with accuracy circle and pan/zoom lock*
 
-![Advanced settings](screenshots/advanced-settings.png)
-*Advanced Settings showing full hardware component details*
-
-![Settings page](screenshots/settings-setup.png)
-*The Setup tab in app settings where you generate your login URL*
+![Multiple bikes](screenshots/widget-location-bikes.png)
+*With multiple bikes, each gets its own color for pin, circle and footer*
 
 -----
 
@@ -94,12 +91,10 @@ The app generates a unique, secure login URL for your Bosch account using PKCE (
 1. Open the **Homey** app on your phone
 1. Go to **More → Apps → Bosch eBike → Settings**
 
-> 📸 *Add screenshot: Homey app → More → Apps*
 
 1. You will see the **Setup** tab with a generated **Login URL**
 1. Tap **Copy** to copy the URL to your clipboard
 
-> 📸 *Add screenshot: Setup tab with Login URL and Copy button*
 
 -----
 
@@ -114,17 +109,14 @@ This is the trickiest step. Because the Bosch login redirects to a mobile deep l
 1. Click the **Network** tab in Developer Tools
 1. Make sure recording is active (red dot in Chrome, or pause button not active in Firefox)
 
-> 📸 *Add screenshot: Chrome DevTools open on Network tab*
 
 1. Paste the Login URL into the browser address bar and press **Enter**
 1. The Bosch account login page will appear — sign in with your Bosch / One Bike App email and password
 
-> 📸 *Add screenshot: Bosch login page*
 
 1. After a successful login, the browser will **attempt to open** a link starting with `onebikeapp-ios://` — this will fail with an error in the browser, which is **completely normal and expected**
 1. In the **Network tab**, look for a request that starts with `onebikeapp-ios://` — it will appear in the list. Click on it.
 
-> 📸 *Add screenshot: Network tab showing the onebikeapp-ios:// request*
 
 1. The full URL in the request will look like this:
    
@@ -133,7 +125,6 @@ This is the trickiest step. Because the Bosch login redirects to a mobile deep l
    ```
 1. Copy the value after `code=` and before the next `&` — that is your **authorization code**
 
-> 📸 *Add screenshot: The code= value highlighted in the URL*
 
 > 💡 **Tip:** The code is a long string of random characters. Copy only the code itself, not the `code=` prefix or anything after the `&`.
 
@@ -144,17 +135,14 @@ This is the trickiest step. Because the Bosch login redirects to a mobile deep l
 1. Open the **Homey** app on your phone
 1. Go to **Devices → +** → search for **Bosch eBike** → tap it
 
-> 📸 *Add screenshot: Add device screen showing Bosch eBike*
 
 1. On the pairing screen you will see a reminder of the instructions
 1. In the **Authorization Code** field, paste the code you copied in Step 3
 
-> 📸 *Add screenshot: Pairing screen with Authorization Code field*
 
 1. Tap **Next** — Homey will connect to Bosch and retrieve your registered bike(s)
 1. Select the bike(s) you want to add and tap **Add**
 
-> 📸 *Add screenshot: Bike selection screen*
 
 Your bike will now appear as a device in Homey. The bike photo and all data will appear within 5 minutes on the first poll.
 
@@ -171,7 +159,6 @@ Tokens use `offline_access` scope and last a long time. However if your bike sto
 1. Paste the new code into the **Authorization Code** field
 1. Tap **Save**
 
-> 📸 *Add screenshot: Advanced Settings showing Authorization Code field*
 
 **Option B — Via Repair (full re-pairing):**
 
