@@ -66,11 +66,8 @@ A [Homey Pro](https://homey.app) app to monitor your **Bosch Smart System eBike*
 ![Last Ride widget](screenshots/widget-last-ride.png)
 *The Last Ride widget: GPS track, distance and ride statistics*
 
-![Location widget](screenshots/widget-location.png)
-*The Location widget: last known position with accuracy circle and pan/zoom lock*
-
-![Multiple bikes](screenshots/widget-location-bikes.png)
-*With multiple bikes, each gets its own color for pin, circle and footer*
+![Location widget](screenshots/widget-location-bikes.png)
+*The Location widget — last known position with accuracy circle and pan/zoom lock; with multiple bikes, each gets its own color for pin, circle and footer*
 
 -----
 
