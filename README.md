@@ -1,5 +1,7 @@
 # Bosch eBike Smart System — Homey Pro App
 
+![Bosch eBike for Homey](assets/images/xlarge.png)
+
 A [Homey Pro](https://homey.app) app to monitor your **Bosch Smart System eBike** — battery, range, motor stats, per-mode riding statistics, and full hardware details — all inside Homey.
 
 -----
@@ -37,15 +39,20 @@ A [Homey Pro](https://homey.app) app to monitor your **Bosch Smart System eBike*
 - Charging status indicator
 - **Bike photo** displayed on the device tile (from Bosch CDN)
 - **Full hardware info** in Advanced Settings — battery, motor, connect module, remote, head unit (model, serial, firmware, manufacturing date)
-- Automatic polling every 5 minutes
-- Supports multiple bikes on one account
+- **Last known location** on the device and on a dashboard **map widget** (ConnectModule with eBike Alarm; other bikes are located from their last ride)
+- **Last Ride widget** — GPS track, distance, riding time, avg. speed, avg. power, cadence, ascent and calories
+- **Theft/movement Flow cards** — get alerted when the bike moves while idle, with map link tags
+- **Adaptive location polling** — every 5 minutes normally, every minute while a possible theft is in progress
+- Automatic status polling every 5 minutes; ride history every 30 minutes
+- Supports multiple bikes on one account (color-coded on the map)
 - Re-authenticate without removing the device
 
 -----
 
 ## Requirements
 
-- Homey Pro (SDK3 — tested on Homey Pro 2023)
+- Homey Pro (Early 2023) or newer — firmware v12.3+ (required for widgets)
+- For location and theft alerts: a **ConnectModule** registered for the **eBike Alarm** feature
 - A Bosch Smart System eBike registered in the **Bosch Flow / One Bike App**
 - A **desktop computer or laptop** with Chrome or Firefox (required for the one-time login step — a mobile browser will not work)
 - Your Bosch account login credentials
@@ -239,9 +246,18 @@ All fields populate automatically on the first poll.
 
 **Custom trigger cards:**
 
-- eBike charging started
-- eBike charging stopped
-- eBike battery drops below X%
+- eBike charging started / stopped
+- eBike battery drops below X% *(fires once when crossing the threshold)*
+- eBike battery rises above X% *(e.g. switch the charger plug off at 80%)*
+- eBike location changed (possible alarm) *(new position while the bike is idle — not charging, not being ridden; tip: enable Bosch eBike Lock so a thief cannot simply ride away)*
+- eBike location updated *(every position report, unfiltered — combine with your own conditions, e.g. "and I am not home")*
+- A new ride was recorded *(with distance / duration / avg. speed / calorie tags)*
+
+**Example flows:**
+
+- *WHEN battery rises above 80% → turn off the charger wall plug*
+- *WHEN possible alarm → AND I am home → flash the lights and send a notification with the map link*
+- *WHEN new ride recorded → send "Nice ride! {distance} km at {avg speed} km/h"*
 
 **Custom condition cards:**
 
@@ -249,6 +265,16 @@ All fields populate automatically on the first poll.
 - eBike battery is above / below X%
 
 All numeric capabilities also automatically generate “becomes greater/less than” flow cards.
+
+-----
+
+## Dashboard Widgets
+
+**eBike Location** — framed map with a colored pin and accuracy circle per bike, a footer showing when each position was last reported and last checked, and a lock button (tap to enable pan/zoom, tap again so the dashboard scrolls normally). Select one, several or all bikes when adding the widget. Bikes without a ConnectModule show the end point of their last ride ("from last ride").
+
+**eBike Last Ride** — your latest ride with its GPS track (toggleable in the widget settings), the distance as a headline, and riding time, avg. speed, avg. power, avg. cadence, ascent and calories. One widget per bike — pick the bike when adding it.
+
+Widgets require Homey Pro (Early 2023) or newer. Ride data appears after it syncs to the Bosch cloud (checked every 30 minutes).
 
 -----
 
@@ -265,8 +291,8 @@ Open **More → Apps → Bosch eBike → Settings**:
 ## Known Limitations
 
 - **Unofficial API** — Bosch may change or disable access at any time. This is the fundamental limitation of this approach.
-- **No ride history** — the Bosch API does not expose individual ride data to third-party clients
-- **5-minute polling** — data reflects the state at the last poll, not real-time
+- **Polling, not push** — status is checked every 5 minutes (location every minute during a suspected theft). The official Flow app's push notifications will always be faster; treat the alarm cards as an automation layer next to them, not a replacement.
+- **Sporadic location reports** — the ConnectModule only reports its position when the bike is powered on, charging, or its motion alarm fires, so the "last known location" can be hours old.
 - **Desktop browser required** for initial authentication — the authorization code cannot be captured on mobile
 - **One Bike App must be set up** — your bike must already be registered in the official Bosch Flow / One Bike App before pairing with Homey
 
@@ -274,67 +300,7 @@ Open **More → Apps → Bosch eBike → Settings**:
 
 ## Changelog
 
-### v0.1.0 — Initial working version
-
-- OAuth2 PKCE authentication via Bosch Flow app credentials
-- Battery state of charge (%) polling
-- Device pairing using Homey `login_credentials` template
-
-### v0.2.0 — Battery details
-
-- Remaining energy (Wh), battery capacity, charge cycles, lifetime energy
-- Fixed unit conversion: `remainingEnergyForRider / 10` = correct Wh value
-
-### v0.3.0 — Range & odometer
-
-- Per-mode range estimates (Eco, Tour/eMTB, Sport, Turbo)
-- Odometer, motor hours (total and assist), max assist speed
-- Charging status indicator
-
-### v0.4.0 — Per-mode statistics
-
-- Cumulative distance and energy per assist mode (Off / Eco / Tour / Sport / Turbo)
-- Source: `driveUnitAssistModes[0–4]` from bike profile API
-
-### v0.5.0 — Capability cleanup & migration
-
-- Removed unused capabilities, added automatic migration on device init
-- Fixed capability naming convention (underscores, no dots)
-
-### v0.6.0 — Pairing & repair improvements
-
-- Repair option via device menu
-- Re-authentication without removing device
-
-### v0.7.0 — App settings & debug logging
-
-- Tabbed settings page (Setup / Debug)
-- PKCE URL generator with Copy button
-- Live debug log viewer
-
-### v0.8.0 — Icons & polish
-
-- SVG icons for all 27 capabilities
-- App brand color set to Bosch red (#E20015)
-
-### v0.9.0 — Hardware info & bike photo
-
-- Bike photo as device tile camera image
-- Full hardware details in Advanced Settings
-- Migrated to Homey Compose (`driver.settings.compose.json`)
-
-### v1.0.0 — Debug improvements & polish
-
-- Split debug log into two sections: poll data (overwrites each poll) and auth events (last 20)
-- Updated setup instructions — corrected re-auth path to Advanced Settings → Connection
-- Added 60-second code expiry warning to setup page
-- Brand color set to Bosch red (#E20015) throughout UI
-- Migrated to Homey Compose structure for proper Advanced Settings support
-
-### v1.0.1 — Metadata update, no code changes
-
-- Added source code into app.json
-- Simple version bump
+See [CHANGELOG.md](CHANGELOG.md).
 
 -----
 
@@ -358,6 +324,9 @@ com.bosch.ebike/
 ├── lib/
 │   ├── BoschEBikeApi.js            # API client, PKCE, token exchange, parsing
 │   └── constants.js                # Capability name constants
+├── widgets/
+│   ├── bike-location/              # Location map widget (api.js + public/)
+│   └── last-ride/                  # Last ride widget (api.js + public/)
 └── drivers/ebike/
     ├── driver.compose.json         # Driver manifest (Homey Compose)
     ├── driver.settings.compose.json # Advanced Settings definition

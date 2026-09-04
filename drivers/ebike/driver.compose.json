@@ -30,7 +30,8 @@
     "ebike_energy_eco",
     "ebike_energy_tour",
     "ebike_energy_sport",
-    "ebike_energy_turbo"
+    "ebike_energy_turbo",
+    "ebike_last_location"
   ],
   "platforms": [
     "local"

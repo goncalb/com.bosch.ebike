@@ -1,12 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <circle cx="25" cy="68" r="18" fill="none" stroke="#333" stroke-width="5"/>
-  <circle cx="75" cy="68" r="18" fill="none" stroke="#333" stroke-width="5"/>
-  <circle cx="25" cy="68" r="3" fill="#333"/>
-  <circle cx="75" cy="68" r="3" fill="#333"/>
-  <line x1="25" y1="68" x2="50" y2="38" stroke="#333" stroke-width="4" stroke-linecap="round"/>
-  <line x1="50" y1="38" x2="75" y2="68" stroke="#333" stroke-width="4" stroke-linecap="round"/>
-  <line x1="50" y1="38" x2="50" y2="68" stroke="#333" stroke-width="4" stroke-linecap="round"/>
-  <line x1="25" y1="68" x2="50" y2="68" stroke="#333" stroke-width="4" stroke-linecap="round"/>
-  <line x1="50" y1="38" x2="62" y2="32" stroke="#333" stroke-width="4" stroke-linecap="round"/>
-  <line x1="50" y1="38" x2="40" y2="33" stroke="#333" stroke-width="4" stroke-linecap="round"/>
+  <g fill="none" stroke="#000" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+    <!-- bike, slightly smaller and lower to leave room for signal arcs -->
+    <circle cx="25" cy="70" r="14.5"/>
+    <circle cx="75" cy="70" r="14.5"/>
+    <path d="M25 70 L49 70 L40 46 M25 70 L40 46 M40 46 L64 48 M49 70 L64 48 L75 70"/>
+    <path d="M40 46 L38 41 M33 40 L44 40"/>
+    <path d="M64 48 L62 41 M62 41 L70 38"/>
+    <!-- signal arcs top-right -->
+    <path d="M74 20 A 15 15 0 0 1 88 26"/>
+    <path d="M70 11 A 25 25 0 0 1 94 21"/>
+  </g>
+  <circle cx="25" cy="70" r="3" fill="#000"/>
+  <circle cx="75" cy="70" r="3" fill="#000"/>
+  <circle cx="49" cy="70" r="4.5" fill="#000"/>
+  <circle cx="78" cy="29" r="3.2" fill="#000"/>
 </svg>

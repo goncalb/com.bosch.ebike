@@ -1,0 +1,8 @@
+{
+  "type": "string",
+  "title": { "en": "Last known location" },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "icon": "/assets/location.svg"
+}

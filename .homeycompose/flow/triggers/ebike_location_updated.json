@@ -1,0 +1,14 @@
+{
+  "id": "ebike_location_updated",
+  "title": { "en": "eBike location updated" },
+  "hint": { "en": "Triggers on every new location report from the ConnectModule, including while riding or charging. Combine with your own conditions (e.g. 'and I am not home') for custom anti-theft flows. For the filtered version, use the 'possible alarm' card instead. Tip: enable Bosch eBike Lock so a thief cannot simply power on and ride. Requires a ConnectModule with the eBike Alarm feature; checked every 5 minutes." },
+  "tokens": [
+    { "name": "latitude",  "type": "number", "title": { "en": "Latitude" },  "example": 52.379 },
+    { "name": "longitude", "type": "number", "title": { "en": "Longitude" }, "example": 4.899 },
+    { "name": "accuracy",  "type": "number", "title": { "en": "Accuracy (m)" }, "example": 12 },
+    { "name": "maps_url",  "type": "string", "title": { "en": "Map link" }, "example": "https://www.google.com/maps?q=52.379,4.899" }
+  ],
+  "args": [
+    { "name": "device", "type": "device", "filter": "driver_id=ebike" }
+  ]
+}

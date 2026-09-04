@@ -1,8 +1,8 @@
 {
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "com.bosch.ebike",
-  "version": "1.0.1",
-  "compatibility": ">=12.0.0",
+  "version": "1.1.2",
+  "compatibility": ">=12.3.0",
   "sdk": 3,
   "platforms": [
     "local"
@@ -11,7 +11,7 @@
     "en": "Bosch eBike"
   },
   "description": {
-    "en": "Monitor your Bosch Smart System eBike in Homey"
+    "en": "Keep an eye on your eBike's battery, range and charging"
   },
   "tags": {
     "en": [
@@ -26,15 +26,17 @@
   "category": [
     "appliances"
   ],
-  "permissions": [],
+  "permissions": [
+    "homey:manager:api"
+  ],
   "images": {
     "small": "/assets/images/small.png",
     "large": "/assets/images/large.png",
     "xlarge": "/assets/images/xlarge.png"
   },
   "author": {
-    "name": "",
-    "email": ""
+    "name": "Gonçalo Barradas",
+    "email": "gjbarradas@gmail.com"
   },
   "brandColor": "#E20015",
   "source": "https://github.com/goncalb/com.bosch.ebike",
@@ -53,6 +55,35 @@
         },
         "hint": {
           "en": "Triggers when the battery level drops below a specified percentage."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=ebike"
+          },
+          {
+            "name": "percentage",
+            "type": "number",
+            "min": 1,
+            "max": 99,
+            "step": 1,
+            "label": {
+              "en": "%"
+            }
+          }
+        ]
+      },
+      {
+        "id": "ebike_battery_above",
+        "title": {
+          "en": "eBike battery rises above"
+        },
+        "titleFormatted": {
+          "en": "eBike battery rises above [[percentage]]%"
+        },
+        "hint": {
+          "en": "Triggers when the battery level rises above a specified percentage, e.g. to switch off a charger wall plug at 80%."
         },
         "args": [
           {
@@ -96,6 +127,164 @@
         "hint": {
           "en": "Triggers when the eBike is unplugged or charging finishes."
         },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=ebike"
+          }
+        ]
+      },
+      {
+        "id": "ebike_moved",
+        "title": {
+          "en": "eBike location changed (possible alarm)"
+        },
+        "hint": {
+          "en": "Triggers when the ConnectModule reports a new location while the bike is idle (not charging and not being ridden). The ConnectModule reports when the bike is powered on, charging, or its motion alarm fires - so an unexpected report can indicate the bike is being moved. Enable Bosch eBike Lock so a thief cannot simply power on and ride, which would suppress this card; the 'eBike location updated' card fires unconditionally if you prefer your own conditions. Requires a ConnectModule with the eBike Alarm feature. Detection is delayed by the polling interval (up to 5 minutes)."
+        },
+        "tokens": [
+          {
+            "name": "latitude",
+            "type": "number",
+            "title": {
+              "en": "Latitude"
+            },
+            "example": 52.379
+          },
+          {
+            "name": "longitude",
+            "type": "number",
+            "title": {
+              "en": "Longitude"
+            },
+            "example": 4.899
+          },
+          {
+            "name": "accuracy",
+            "type": "number",
+            "title": {
+              "en": "Accuracy (m)"
+            },
+            "example": 12
+          },
+          {
+            "name": "maps_url",
+            "type": "string",
+            "title": {
+              "en": "Map link"
+            },
+            "example": "https://www.google.com/maps?q=52.379,4.899"
+          }
+        ],
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=ebike"
+          }
+        ]
+      },
+      {
+        "id": "ebike_new_ride",
+        "title": {
+          "en": "A new ride was recorded"
+        },
+        "hint": {
+          "en": "Triggers when a new ride appears in your Bosch ride history. Rides sync to the Bosch cloud after the bike is powered off, so this can lag the actual ride. Checked every 30 minutes."
+        },
+        "tokens": [
+          {
+            "name": "title",
+            "type": "string",
+            "title": {
+              "en": "Title"
+            },
+            "example": "Morning ride"
+          },
+          {
+            "name": "distance_km",
+            "type": "number",
+            "title": {
+              "en": "Distance (km)"
+            },
+            "example": 23.4
+          },
+          {
+            "name": "duration_min",
+            "type": "number",
+            "title": {
+              "en": "Duration (min)"
+            },
+            "example": 62
+          },
+          {
+            "name": "avg_speed",
+            "type": "number",
+            "title": {
+              "en": "Avg speed (km/h)"
+            },
+            "example": 21.5
+          },
+          {
+            "name": "calories",
+            "type": "number",
+            "title": {
+              "en": "Calories"
+            },
+            "example": 480
+          }
+        ],
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=ebike"
+          }
+        ]
+      },
+      {
+        "id": "ebike_location_updated",
+        "title": {
+          "en": "eBike location updated"
+        },
+        "hint": {
+          "en": "Triggers on every new location report from the ConnectModule, including while riding or charging. Combine with your own conditions (e.g. 'and I am not home') for custom anti-theft flows. For the filtered version, use the 'possible alarm' card instead. Tip: enable Bosch eBike Lock so a thief cannot simply power on and ride. Requires a ConnectModule with the eBike Alarm feature; checked every 5 minutes."
+        },
+        "tokens": [
+          {
+            "name": "latitude",
+            "type": "number",
+            "title": {
+              "en": "Latitude"
+            },
+            "example": 52.379
+          },
+          {
+            "name": "longitude",
+            "type": "number",
+            "title": {
+              "en": "Longitude"
+            },
+            "example": 4.899
+          },
+          {
+            "name": "accuracy",
+            "type": "number",
+            "title": {
+              "en": "Accuracy (m)"
+            },
+            "example": 12
+          },
+          {
+            "name": "maps_url",
+            "type": "string",
+            "title": {
+              "en": "Map link"
+            },
+            "example": "https://www.google.com/maps?q=52.379,4.899"
+          }
+        ],
         "args": [
           {
             "name": "device",
@@ -180,7 +369,8 @@
         "ebike_energy_eco",
         "ebike_energy_tour",
         "ebike_energy_sport",
-        "ebike_energy_turbo"
+        "ebike_energy_turbo",
+        "ebike_last_location"
       ],
       "platforms": [
         "local"
@@ -976,6 +1166,65 @@
       },
       "min": 0,
       "decimals": 1
+    },
+    "ebike_last_location": {
+      "type": "string",
+      "title": {
+        "en": "Last known location"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/location.svg"
+    }
+  },
+  "homeyCommunityTopicId": 154269,
+  "support": "https://community.homey.app/t/154269",
+  "homepage": "https://github.com/goncalb/com.bosch.ebike",
+  "widgets": {
+    "bike-location": {
+      "name": {
+        "en": "eBike Location"
+      },
+      "height": "100%",
+      "api": {
+        "getLocations": {
+          "method": "GET",
+          "path": "/locations"
+        }
+      },
+      "devices": {
+        "type": "app",
+        "singular": false
+      },
+      "id": "bike-location"
+    },
+    "last-ride": {
+      "name": {
+        "en": "eBike Last Ride"
+      },
+      "height": 250,
+      "api": {
+        "getLastRide": {
+          "method": "GET",
+          "path": "/last-ride"
+        }
+      },
+      "devices": {
+        "type": "app",
+        "singular": true
+      },
+      "settings": [
+        {
+          "id": "showMap",
+          "type": "checkbox",
+          "value": true,
+          "title": {
+            "en": "Show ride map"
+          }
+        }
+      ],
+      "id": "last-ride"
     }
   }
 }

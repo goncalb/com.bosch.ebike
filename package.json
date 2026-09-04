@@ -1,6 +1,6 @@
 {
   "name": "com.bosch.ebike",
-  "version": "1.0.0",
+  "version": "1.1.2",
   "description": "Bosch eBike Smart System integration for Homey Pro",
   "main": "app.js",
   "scripts": {
@@ -8,9 +8,6 @@
   },
   "engines": {
     "node": ">=18.0.0"
-  },
-  "dependencies": {
-    "node-fetch": "3.3.2"
   },
   "devDependencies": {
     "homey": "^3.0.0"
@@ -21,7 +18,9 @@
     "bosch",
     "smartsystem"
   ],
-  "author": "",
-  "license": "MIT"
+  "author": "Gonçalo Barradas <gjbarradas@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "homey-api": "^3.0.0"
+  }
 }
-

@@ -1,7 +1,7 @@
 {
   "id": "com.bosch.ebike",
-  "version": "1.0.1",
-  "compatibility": ">=12.0.0",
+  "version": "1.1.2",
+  "compatibility": ">=12.3.0",
   "sdk": 3,
   "platforms": [
     "local"
@@ -10,7 +10,7 @@
     "en": "Bosch eBike"
   },
   "description": {
-    "en": "Monitor your Bosch Smart System eBike in Homey"
+    "en": "Keep an eye on your eBike's battery, range and charging"
   },
   "tags": {
     "en": [
@@ -25,19 +25,24 @@
   "category": [
     "appliances"
   ],
-  "permissions": [],
+  "permissions": [
+    "homey:manager:api"
+  ],
   "images": {
     "small": "/assets/images/small.png",
     "large": "/assets/images/large.png",
     "xlarge": "/assets/images/xlarge.png"
   },
   "author": {
-    "name": "",
-    "email": ""
+    "name": "Gonçalo Barradas",
+    "email": "gjbarradas@gmail.com"
   },
   "brandColor": "#E20015",
   "source": "https://github.com/goncalb/com.bosch.ebike",
   "bugs": {
     "url": "https://github.com/goncalb/com.bosch.ebike/issues"
-  }
+  },
+  "homeyCommunityTopicId": 154269,
+  "support": "https://community.homey.app/t/154269",
+  "homepage": "https://github.com/goncalb/com.bosch.ebike"
 }

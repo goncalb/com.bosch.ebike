@@ -1,0 +1,16 @@
+{
+  "name": {
+    "en": "eBike Location"
+  },
+  "height": "100%",
+  "api": {
+    "getLocations": {
+      "method": "GET",
+      "path": "/locations"
+    }
+  },
+  "devices": {
+    "type": "app",
+    "singular": false
+  }
+}

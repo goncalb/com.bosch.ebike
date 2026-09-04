@@ -1,12 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <circle cx="25" cy="68" r="18" fill="none" stroke="#333" stroke-width="5"/>
-  <circle cx="75" cy="68" r="18" fill="none" stroke="#333" stroke-width="5"/>
-  <circle cx="25" cy="68" r="3" fill="#333"/>
-  <circle cx="75" cy="68" r="3" fill="#333"/>
-  <line x1="25" y1="68" x2="50" y2="38" stroke="#333" stroke-width="4" stroke-linecap="round"/>
-  <line x1="50" y1="38" x2="75" y2="68" stroke="#333" stroke-width="4" stroke-linecap="round"/>
-  <line x1="50" y1="38" x2="50" y2="68" stroke="#333" stroke-width="4" stroke-linecap="round"/>
-  <line x1="25" y1="68" x2="50" y2="68" stroke="#333" stroke-width="4" stroke-linecap="round"/>
-  <line x1="50" y1="38" x2="62" y2="32" stroke="#333" stroke-width="4" stroke-linecap="round"/>
-  <line x1="50" y1="38" x2="40" y2="33" stroke="#333" stroke-width="4" stroke-linecap="round"/>
+  <g fill="none" stroke="#000" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="24" cy="62" r="16.5"/>
+    <circle cx="76" cy="62" r="16.5"/>
+    <path d="M24 62 L50 62 L40 34 M24 62 L40 34 M40 34 L66 36 M50 62 L66 36 L76 62"/>
+    <path d="M40 34 L38 28 M32 27 L44 27"/>
+    <path d="M66 36 L64 27 M64 27 L73 24"/>
+  </g>
+  <circle cx="24" cy="62" r="3" fill="#000"/>
+  <circle cx="76" cy="62" r="3" fill="#000"/>
+  <circle cx="50" cy="62" r="4.5" fill="#000"/>
+  <path d="M54 39 L47 50 L51.5 50 L48.5 58 L58 45 L53 45 L57 39 Z" fill="#000" stroke="none"/>
 </svg>

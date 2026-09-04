@@ -1,0 +1,50 @@
+{
+  "id": "ebike_moved",
+  "title": {
+    "en": "eBike location changed (possible alarm)"
+  },
+  "hint": {
+    "en": "Triggers when the ConnectModule reports a new location while the bike is idle (not charging and not being ridden). The ConnectModule reports when the bike is powered on, charging, or its motion alarm fires - so an unexpected report can indicate the bike is being moved. Enable Bosch eBike Lock so a thief cannot simply power on and ride, which would suppress this card; the 'eBike location updated' card fires unconditionally if you prefer your own conditions. Requires a ConnectModule with the eBike Alarm feature. Detection is delayed by the polling interval (up to 5 minutes)."
+  },
+  "tokens": [
+    {
+      "name": "latitude",
+      "type": "number",
+      "title": {
+        "en": "Latitude"
+      },
+      "example": 52.379
+    },
+    {
+      "name": "longitude",
+      "type": "number",
+      "title": {
+        "en": "Longitude"
+      },
+      "example": 4.899
+    },
+    {
+      "name": "accuracy",
+      "type": "number",
+      "title": {
+        "en": "Accuracy (m)"
+      },
+      "example": 12
+    },
+    {
+      "name": "maps_url",
+      "type": "string",
+      "title": {
+        "en": "Map link"
+      },
+      "example": "https://www.google.com/maps?q=52.379,4.899"
+    }
+  ],
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=ebike"
+    }
+  ]
+}

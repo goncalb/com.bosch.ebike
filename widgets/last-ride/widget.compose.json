@@ -1,0 +1,26 @@
+{
+  "name": {
+    "en": "eBike Last Ride"
+  },
+  "height": 250,
+  "api": {
+    "getLastRide": {
+      "method": "GET",
+      "path": "/last-ride"
+    }
+  },
+  "devices": {
+    "type": "app",
+    "singular": true
+  },
+  "settings": [
+    {
+      "id": "showMap",
+      "type": "checkbox",
+      "value": true,
+      "title": {
+        "en": "Show ride map"
+      }
+    }
+  ]
+}

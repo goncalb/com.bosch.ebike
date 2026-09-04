@@ -11,6 +11,20 @@ class EBikeDriver extends Homey.Driver {
     this._chargingStartedTrigger = this.homey.flow.getDeviceTriggerCard('ebike_charging_started');
     this._chargingStoppedTrigger = this.homey.flow.getDeviceTriggerCard('ebike_charging_stopped');
     this._batteryBelowTrigger    = this.homey.flow.getDeviceTriggerCard('ebike_battery_below');
+    this._batteryAboveTrigger    = this.homey.flow.getDeviceTriggerCard('ebike_battery_above');
+    this._movedTrigger           = this.homey.flow.getDeviceTriggerCard('ebike_moved');
+    this._newRideTrigger         = this.homey.flow.getDeviceTriggerCard('ebike_new_ride');
+    this._locationUpdatedTrigger = this.homey.flow.getDeviceTriggerCard('ebike_location_updated');
+
+    // Only fire when the battery level crosses the flow's own threshold,
+    // i.e. previous value was on one side and current value is on the other.
+    this._batteryBelowTrigger.registerRunListener(async (args, state) => {
+      return state.previous >= args.percentage && state.current < args.percentage;
+    });
+
+    this._batteryAboveTrigger.registerRunListener(async (args, state) => {
+      return state.previous <= args.percentage && state.current > args.percentage;
+    });
 
     this.homey.flow.getConditionCard('ebike_is_charging')
       .registerRunListener(async (args) => {
@@ -32,8 +46,26 @@ class EBikeDriver extends Homey.Driver {
     return this._chargingStoppedTrigger.trigger(device);
   }
 
-  async triggerBatteryBelow(device, pct) {
-    return this._batteryBelowTrigger.trigger(device, {}, { percentage: pct });
+  async triggerNewRide(device, tokens) {
+    return this._newRideTrigger.trigger(device, tokens);
+  }
+
+  async triggerLocationUpdated(device, tokens) {
+    return this._locationUpdatedTrigger.trigger(device, tokens);
+  }
+
+  async triggerMoved(device, tokens) {
+    return this._movedTrigger.trigger(device, tokens);
+  }
+
+  async triggerBatteryChanged(device, previousPct, currentPct) {
+    const state = { previous: previousPct, current: currentPct };
+    if (currentPct < previousPct) {
+      return this._batteryBelowTrigger.trigger(device, {}, state);
+    }
+    if (currentPct > previousPct) {
+      return this._batteryAboveTrigger.trigger(device, {}, state);
+    }
   }
 
   async onPair(session) {

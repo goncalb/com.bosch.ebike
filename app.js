@@ -1,11 +1,36 @@
 'use strict';
 
 const Homey = require('homey');
+const { HomeyAPI } = require('homey-api');
 
 class BoschEBikeApp extends Homey.App {
 
   async onInit() {
     this.log('Bosch eBike app started');
+  }
+
+  /**
+   * Maps Web-API device ids (what widgets' Homey.getDeviceIds() returns)
+   * to driver data ids (what the SDK exposes). Cached for 5 minutes.
+   */
+  async getWidgetDeviceMap() {
+    const now = Date.now();
+    if (this._deviceMap && now - this._deviceMapTime < 5 * 60 * 1000) {
+      return this._deviceMap;
+    }
+    if (!this._homeyApi) {
+      this._homeyApi = await HomeyAPI.createAppAPI({ homey: this.homey });
+    }
+    const devices = await this._homeyApi.devices.getDevices();
+    const map = {};
+    for (const d of Object.values(devices)) {
+      if (d.driverId && String(d.driverId).endsWith(':ebike')) {
+        map[d.id] = { dataId: d.data && d.data.id, name: d.name };
+      }
+    }
+    this._deviceMap = map;
+    this._deviceMapTime = now;
+    return map;
   }
 
   // Called by devices to save poll debug data (overwrites — only last poll kept)

@@ -4,5 +4,20 @@
   },
   "1.0.1": {
     "en": "Added source code URL"
+  },
+  "1.0.2": {
+    "en": "Fixed battery threshold triggers, new rises-above trigger, more resilient polling"
+  },
+  "1.0.3": {
+    "en": "First stable release. App Store review fixes: description, driver icon and driver image"
+  },
+  "1.1.0": {
+    "en": "Bike location and last-ride dashboard widgets with map, theft/movement and new-ride Flow cards. Requires Homey Pro (Early 2023) or newer"
+  },
+  "1.1.1": {
+    "en": "Test release of the 1.1.0 feature set"
+  },
+  "1.1.2": {
+    "en": "Adaptive location polling during possible theft, per-bike colors and last-position times on the map widget, 24-hour times, layout refinements"
   }
 }

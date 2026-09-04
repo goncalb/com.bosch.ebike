@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <link rel="stylesheet" href="./leaflet/leaflet.css" />
+  <script src="./leaflet/leaflet.js"></script>
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; }
+    body {
+      font-family: -apple-system, system-ui, sans-serif;
+      color: var(--homey-text-color, #222);
+      background: var(--homey-background-color, transparent);
+    }
+    .wrap { padding: 10px 12px 12px; box-sizing: border-box; }
+    html, body { touch-action: pan-y; }
+    #rideMap { height: 190px; border-radius: 12px; margin-bottom: 10px; display: none; touch-action: pan-y;
+               background: var(--homey-background-color, #f2f2f2); }
+    .leaflet-control-attribution { font-size: 9px; }
+    .title-row { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+    .ride-title {
+      font-size: 18px; font-weight: 700;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .ride-date { font-size: 13px; color: var(--homey-text-color-light, #888); white-space: nowrap; }
+    .hero { display: flex; align-items: baseline; gap: 6px; margin: 8px 0 14px; }
+    .hero .dist { font-size: 46px; font-weight: 800; color: #E20015; line-height: 1; }
+    .hero .unit { font-size: 18px; font-weight: 500; color: var(--homey-text-color-light, #888); }
+    .grid { display: grid; grid-template-columns: 1fr 1fr 1fr; row-gap: 14px; column-gap: 8px; }
+    .stat .l { font-size: 12px; color: var(--homey-text-color-light, #888); margin-bottom: 2px; }
+    .stat .v { font-size: 19px; font-weight: 700; white-space: nowrap; }
+    .stat .v small { font-size: 12px; font-weight: 500; color: var(--homey-text-color-light, #888); }
+    #empty {
+      display: none; padding: 16px 0; font-size: 13px;
+      color: var(--homey-text-color-light, #888);
+    }
+  </style>
+</head>
+<body class="homey-widget">
+  <div class="wrap">
+    <div id="content" style="display:none">
+      <div id="rideMap"></div>
+      <div class="title-row">
+        <div class="ride-title" id="rideTitle">Last ride</div>
+        <div class="ride-date" id="rideDate"></div>
+      </div>
+      <div class="hero">
+        <span class="dist" id="dist">–</span><span class="unit">km</span>
+      </div>
+      <div class="grid">
+        <div class="stat"><div class="l">Riding time</div><div class="v" id="duration">–</div></div>
+        <div class="stat"><div class="l">Avg. speed</div><div class="v"><span id="speed">–</span> <small>km/h</small></div></div>
+        <div class="stat"><div class="l">Avg. power</div><div class="v"><span id="power">–</span> <small>W</small></div></div>
+        <div class="stat"><div class="l">Avg. cadence</div><div class="v"><span id="cadence">–</span> <small>rpm</small></div></div>
+        <div class="stat"><div class="l">Ascent</div><div class="v"><span id="elev">–</span> <small>m</small></div></div>
+        <div class="stat"><div class="l">Calories</div><div class="v"><span id="cal">–</span> <small>kcal</small></div></div>
+      </div>
+    </div>
+    <div id="empty">No ride data for this bike yet.<br/>The app checks your Bosch ride history every 30 minutes.</div>
+  </div>
+
+  <script type="text/javascript">
+    function onHomeyReady(Homey) {
+      var showMap = true;
+      try { showMap = Homey.getSettings().showMap !== false; } catch (e) {}
+      Homey.ready({ height: 250 });
+      function setHeight(px) {
+        try { if (typeof Homey.setHeight === 'function') Homey.setHeight(px); } catch (e) {}
+      }
+
+      var deviceIds = [];
+      try { deviceIds = Homey.getDeviceIds() || []; } catch (e) {}
+
+      var map = null, trackLayer = null;
+
+      // Google encoded polyline decoder -> [[lat, lng], ...]
+      function decodePolyline(str) {
+        var points = [], index = 0, lat = 0, lng = 0;
+        try {
+          while (index < str.length) {
+            for (var which = 0; which < 2; which++) {
+              var result = 0, shift = 0, b;
+              do {
+                b = str.charCodeAt(index++) - 63;
+                result |= (b & 0x1f) << shift;
+                shift += 5;
+              } while (b >= 0x20);
+              var delta = (result & 1) ? ~(result >> 1) : (result >> 1);
+              if (which === 0) lat += delta; else lng += delta;
+            }
+            points.push([lat / 1e5, lng / 1e5]);
+          }
+        } catch (e) {}
+        return points;
+      }
+
+      function renderMap(r) {
+        var el = document.getElementById('rideMap');
+        if (!showMap || (!r.polyline && !r.track)) { el.style.display = 'none'; setHeight(250); return; }
+        var pts = r.track || decodePolyline(r.polyline);
+        if (pts.length < 2) { el.style.display = 'none'; setHeight(250); return; }
+        el.style.display = 'block';
+        setHeight(440);
+        if (!map) {
+          map = L.map('rideMap', { zoomControl: false, attributionControl: true,
+                                   dragging: false, scrollWheelZoom: false, touchZoom: false });
+          L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          }).addTo(map);
+          trackLayer = L.layerGroup().addTo(map);
+        }
+        trackLayer.clearLayers();
+        L.polyline(pts, { color: '#E20015', weight: 4, opacity: 0.9 }).addTo(trackLayer);
+        L.circleMarker(pts[0], { radius: 5, color: '#fff', weight: 2, fillColor: '#3d4a58', fillOpacity: 1 }).addTo(trackLayer);
+        L.circleMarker(pts[pts.length - 1], { radius: 5, color: '#fff', weight: 2, fillColor: '#E20015', fillOpacity: 1 }).addTo(trackLayer);
+        map.fitBounds(L.latLngBounds(pts), { padding: [16, 16] });
+        setTimeout(function () { map.invalidateSize(); map.fitBounds(L.latLngBounds(pts), { padding: [16, 16] }); }, 150);
+      }
+
+      function fmtDuration(r) {
+        var sec = r.durationSec;
+        if (sec === null || sec === undefined) {
+          if (r.durationMin === null || r.durationMin === undefined) return '–';
+          sec = r.durationMin * 60;
+        }
+        var h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = Math.round(sec % 60);
+        function p(n) { return (n < 10 ? '0' : '') + n; }
+        return h > 0 ? (h + ':' + p(m) + ':' + p(s)) : (m + ':' + p(s));
+      }
+
+      function fmtDate(iso) {
+        if (!iso) return '';
+        try {
+          var d = new Date(iso);
+          return d.toLocaleDateString(undefined, { day: 'numeric', month: 'short' }) +
+                 ', ' + d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', hour12: false });
+        } catch (e) { return ''; }
+      }
+
+      function num(v, digits) {
+        var n = Number(v);
+        return Number.isFinite(n) ? n.toFixed(digits === undefined ? 0 : digits) : '–';
+      }
+
+      function render(bikes) {
+        var empty = document.getElementById('empty');
+        var content = document.getElementById('content');
+        if (!bikes || bikes.length === 0) {
+          empty.style.display = 'block'; content.style.display = 'none'; return;
+        }
+
+        var b = bikes[0];
+        if (deviceIds.length) {
+          var match = bikes.filter(function (bk) { return deviceIds.some(function (did) {
+              return String(did) === String(bk.homeyId) || String(did) === String(bk.id);
+            }); });
+          if (match.length) b = match[0];
+        }
+        var r = b.ride;
+        if (!r) { empty.style.display = 'block'; content.style.display = 'none'; return; }
+
+        empty.style.display = 'none'; content.style.display = 'block';
+        document.getElementById('rideTitle').textContent = r.title || 'Last ride';
+        document.getElementById('rideDate').textContent = fmtDate(r.startTime);
+        document.getElementById('dist').textContent = num(r.distanceKm, 1);
+        document.getElementById('duration').textContent = fmtDuration(r);
+        document.getElementById('speed').textContent = num(r.avgSpeed, 1);
+        document.getElementById('power').textContent = num(r.avgPower, 0);
+        document.getElementById('cadence').textContent = num(r.avgCadence, 0);
+        document.getElementById('elev').textContent = num(r.elevationGain, 0);
+        document.getElementById('cal').textContent = num(r.calories, 0);
+        renderMap(r);
+      }
+
+      function refresh() {
+        Homey.api('GET', '/last-ride?sel=' + encodeURIComponent(JSON.stringify(deviceIds)), {})
+          .then(render)
+          .catch(function (err) { console.error(err); document.getElementById('empty').style.display = 'block'; });
+      }
+
+      refresh();
+      setInterval(refresh, 15 * 60 * 1000);
+    }
+  </script>
+</body>
+</html>

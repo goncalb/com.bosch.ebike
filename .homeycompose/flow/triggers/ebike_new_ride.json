@@ -1,0 +1,15 @@
+{
+  "id": "ebike_new_ride",
+  "title": { "en": "A new ride was recorded" },
+  "hint": { "en": "Triggers when a new ride appears in your Bosch ride history. Rides sync to the Bosch cloud after the bike is powered off, so this can lag the actual ride. Checked every 30 minutes." },
+  "tokens": [
+    { "name": "title",        "type": "string", "title": { "en": "Title" }, "example": "Morning ride" },
+    { "name": "distance_km",  "type": "number", "title": { "en": "Distance (km)" }, "example": 23.4 },
+    { "name": "duration_min", "type": "number", "title": { "en": "Duration (min)" }, "example": 62 },
+    { "name": "avg_speed",    "type": "number", "title": { "en": "Avg speed (km/h)" }, "example": 21.5 },
+    { "name": "calories",     "type": "number", "title": { "en": "Calories" }, "example": 480 }
+  ],
+  "args": [
+    { "name": "device", "type": "device", "filter": "driver_id=ebike" }
+  ]
+}
