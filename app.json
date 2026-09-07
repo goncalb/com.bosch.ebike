@@ -1,7 +1,7 @@
 {
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "com.bosch.ebike",
-  "version": "1.1.2",
+  "version": "1.1.4",
   "compatibility": ">=12.3.0",
   "sdk": 3,
   "platforms": [
@@ -26,9 +26,7 @@
   "category": [
     "appliances"
   ],
-  "permissions": [
-    "homey:manager:api"
-  ],
+  "permissions": [],
   "images": {
     "small": "/assets/images/small.png",
     "large": "/assets/images/large.png",
@@ -43,18 +41,21 @@
   "bugs": {
     "url": "https://github.com/goncalb/com.bosch.ebike/issues"
   },
+  "homeyCommunityTopicId": 154269,
+  "support": "https://community.homey.app/t/154269",
+  "homepage": "https://github.com/goncalb/com.bosch.ebike",
   "flow": {
     "triggers": [
       {
-        "id": "ebike_battery_below",
+        "id": "ebike_battery_above",
         "title": {
-          "en": "eBike battery drops below"
+          "en": "eBike battery rises above"
         },
         "titleFormatted": {
-          "en": "eBike battery drops below [[percentage]]%"
+          "en": "eBike battery rises above [[percentage]]%"
         },
         "hint": {
-          "en": "Triggers when the battery level drops below a specified percentage."
+          "en": "Triggers when the battery level rises above a specified percentage, e.g. to switch off a charger wall plug at 80%."
         },
         "args": [
           {
@@ -75,15 +76,15 @@
         ]
       },
       {
-        "id": "ebike_battery_above",
+        "id": "ebike_battery_below",
         "title": {
-          "en": "eBike battery rises above"
+          "en": "eBike battery drops below"
         },
         "titleFormatted": {
-          "en": "eBike battery rises above [[percentage]]%"
+          "en": "eBike battery drops below [[percentage]]%"
         },
         "hint": {
-          "en": "Triggers when the battery level rises above a specified percentage, e.g. to switch off a charger wall plug at 80%."
+          "en": "Triggers when the battery level drops below a specified percentage."
         },
         "args": [
           {
@@ -127,6 +128,56 @@
         "hint": {
           "en": "Triggers when the eBike is unplugged or charging finishes."
         },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=ebike"
+          }
+        ]
+      },
+      {
+        "id": "ebike_location_updated",
+        "title": {
+          "en": "eBike location updated"
+        },
+        "hint": {
+          "en": "Triggers on every new location report from the ConnectModule, including while riding or charging. Combine with your own conditions (e.g. 'and I am not home') for custom anti-theft flows. For the filtered version, use the 'possible alarm' card instead. Tip: enable Bosch eBike Lock so a thief cannot simply power on and ride. Requires a ConnectModule with the eBike Alarm feature; checked every 5 minutes."
+        },
+        "tokens": [
+          {
+            "name": "latitude",
+            "type": "number",
+            "title": {
+              "en": "Latitude"
+            },
+            "example": 52.379
+          },
+          {
+            "name": "longitude",
+            "type": "number",
+            "title": {
+              "en": "Longitude"
+            },
+            "example": 4.899
+          },
+          {
+            "name": "accuracy",
+            "type": "number",
+            "title": {
+              "en": "Accuracy (m)"
+            },
+            "example": 12
+          },
+          {
+            "name": "maps_url",
+            "type": "string",
+            "title": {
+              "en": "Map link"
+            },
+            "example": "https://www.google.com/maps?q=52.379,4.899"
+          }
+        ],
         "args": [
           {
             "name": "device",
@@ -233,56 +284,6 @@
               "en": "Calories"
             },
             "example": 480
-          }
-        ],
-        "args": [
-          {
-            "name": "device",
-            "type": "device",
-            "filter": "driver_id=ebike"
-          }
-        ]
-      },
-      {
-        "id": "ebike_location_updated",
-        "title": {
-          "en": "eBike location updated"
-        },
-        "hint": {
-          "en": "Triggers on every new location report from the ConnectModule, including while riding or charging. Combine with your own conditions (e.g. 'and I am not home') for custom anti-theft flows. For the filtered version, use the 'possible alarm' card instead. Tip: enable Bosch eBike Lock so a thief cannot simply power on and ride. Requires a ConnectModule with the eBike Alarm feature; checked every 5 minutes."
-        },
-        "tokens": [
-          {
-            "name": "latitude",
-            "type": "number",
-            "title": {
-              "en": "Latitude"
-            },
-            "example": 52.379
-          },
-          {
-            "name": "longitude",
-            "type": "number",
-            "title": {
-              "en": "Longitude"
-            },
-            "example": 4.899
-          },
-          {
-            "name": "accuracy",
-            "type": "number",
-            "title": {
-              "en": "Accuracy (m)"
-            },
-            "example": 12
-          },
-          {
-            "name": "maps_url",
-            "type": "string",
-            "title": {
-              "en": "Map link"
-            },
-            "example": "https://www.google.com/maps?q=52.379,4.899"
           }
         ],
         "args": [
@@ -749,6 +750,53 @@
       ]
     }
   ],
+  "widgets": {
+    "bike-location": {
+      "name": {
+        "en": "eBike Location"
+      },
+      "height": "100%",
+      "api": {
+        "getLocations": {
+          "method": "GET",
+          "path": "/locations"
+        }
+      },
+      "devices": {
+        "type": "app",
+        "singular": false
+      },
+      "id": "bike-location",
+      "settings": []
+    },
+    "last-ride": {
+      "name": {
+        "en": "eBike Last Ride"
+      },
+      "height": 250,
+      "api": {
+        "getLastRide": {
+          "method": "GET",
+          "path": "/last-ride"
+        }
+      },
+      "devices": {
+        "type": "app",
+        "singular": true
+      },
+      "settings": [
+        {
+          "id": "showMap",
+          "type": "checkbox",
+          "value": true,
+          "title": {
+            "en": "Show ride map"
+          }
+        }
+      ],
+      "id": "last-ride"
+    }
+  },
   "capabilities": {
     "ebike_battery_capacity": {
       "type": "number",
@@ -1007,6 +1055,16 @@
       "min": 0,
       "decimals": 0
     },
+    "ebike_last_location": {
+      "type": "string",
+      "title": {
+        "en": "Last known location"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/location.svg"
+    },
     "ebike_lifetime_energy": {
       "type": "number",
       "title": {
@@ -1166,65 +1224,6 @@
       },
       "min": 0,
       "decimals": 1
-    },
-    "ebike_last_location": {
-      "type": "string",
-      "title": {
-        "en": "Last known location"
-      },
-      "getable": true,
-      "setable": false,
-      "uiComponent": "sensor",
-      "icon": "/assets/location.svg"
-    }
-  },
-  "homeyCommunityTopicId": 154269,
-  "support": "https://community.homey.app/t/154269",
-  "homepage": "https://github.com/goncalb/com.bosch.ebike",
-  "widgets": {
-    "bike-location": {
-      "name": {
-        "en": "eBike Location"
-      },
-      "height": "100%",
-      "api": {
-        "getLocations": {
-          "method": "GET",
-          "path": "/locations"
-        }
-      },
-      "devices": {
-        "type": "app",
-        "singular": false
-      },
-      "id": "bike-location"
-    },
-    "last-ride": {
-      "name": {
-        "en": "eBike Last Ride"
-      },
-      "height": 250,
-      "api": {
-        "getLastRide": {
-          "method": "GET",
-          "path": "/last-ride"
-        }
-      },
-      "devices": {
-        "type": "app",
-        "singular": true
-      },
-      "settings": [
-        {
-          "id": "showMap",
-          "type": "checkbox",
-          "value": true,
-          "title": {
-            "en": "Show ride map"
-          }
-        }
-      ],
-      "id": "last-ride"
     }
   }
 }

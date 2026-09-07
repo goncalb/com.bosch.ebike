@@ -285,7 +285,11 @@ class EBikeDevice extends Homey.Device {
         this.log('Location poll: unexpected response shape, keys:', Object.keys(data).join(','));
         return;
       }
-      if (list.length === 0) { this.log('Location poll: no location reports yet'); return; }
+      if (list.length === 0) {
+        this.log('Location poll: no location reports yet');
+        await this.setStoreValue('locCheckOkAt', new Date().toISOString());
+        return;
+      }
 
       const raw = list[0] || {};
       const loc = raw.attributes || raw;  // JSON:API resources wrap fields in attributes
@@ -304,6 +308,7 @@ class EBikeDevice extends Homey.Device {
 
       await this.setStoreValue('lastLocation', entry);
       await this.setStoreValue('lastLocationKey', key);
+      await this.setStoreValue('locCheckOkAt', new Date().toISOString());
       await this._setCapSafe(CAP.LAST_LOCATION, `${lat.toFixed(5)}, ${lng.toFixed(5)}`);
 
       // New report while idle => possible alarm (module only wakes for
@@ -504,6 +509,8 @@ class EBikeDevice extends Homey.Device {
       name: this.getName(),
       ...(loc || {}),
       hasLocation: !!(loc && Number.isFinite(loc.lat)),
+      checkOkAt:   this.getStoreValue('locCheckOkAt') || null,
+      checkFailAt: this.getStoreValue('locCheckFailAt') || null,
     };
   }
 

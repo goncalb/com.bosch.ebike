@@ -19,6 +19,7 @@
     }
     .foot-row { margin-bottom: 4px; overflow: hidden; }
     .foot-head { display: flex; align-items: center; gap: 7px; }
+    .foot-status { width: 10px; height: 10px; border-radius: 50%; flex: none; margin-left: auto; }
     .foot-dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
     .foot-name { font-size: 16px; font-weight: 700; color: var(--homey-text-color, #222);
                  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
@@ -112,13 +113,24 @@
       }
 
       function footerTime(b) {
+        var seenIso = b.ts || (b.source === 'ride' ? b.fetchedAt : null);
         var parts = [];
-        var abs = absTime(b.ts || null);
+        var rel = relTime(seenIso);
+        var abs = absTime(seenIso);
+        if (rel) parts.push('Seen ' + rel);
         if (abs) parts.push(abs);
-        var rel = relTime(b.fetchedAt);
-        if (rel) parts.push('checked ' + rel);
         if (b.source === 'ride') parts.push('from last ride');
-        return parts.join(' \u00b7 ') || 'No timestamp yet';
+        return parts.join(' \u00b7 ') || 'No position report yet';
+      }
+
+      // green: recent successful check; yellow: stale or failing; grey: ride-derived
+      function statusColor(b) {
+        if (b.source === 'ride') return '#B0B5BB';
+        var okAge = b.checkOkAt ? Date.now() - Date.parse(b.checkOkAt) : Infinity;
+        var failedAfterOk = b.checkFailAt && (!b.checkOkAt ||
+          Date.parse(b.checkFailAt) > Date.parse(b.checkOkAt));
+        if (okAge < 12 * 60 * 1000 && !failedAfterOk) return '#34C759';
+        return '#FFC400';
       }
 
       function fmtTime(entry) {
@@ -190,6 +202,10 @@
           nm.className = 'foot-name';
           nm.textContent = b.name || 'eBike';
           head.appendChild(dot); head.appendChild(nm);
+          var st = document.createElement('span');
+          st.className = 'foot-status';
+          st.style.background = statusColor(b);
+          head.appendChild(st);
           var tm = document.createElement('div');
           tm.className = 'foot-time';
           tm.textContent = footerTime(b);

@@ -6,5 +6,4 @@ env.json
 
 
 # Added by Homey CLI
-/.homeybuild/.homeybuild/
-.homeybuild/
+/.homeybuild/

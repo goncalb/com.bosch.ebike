@@ -2,6 +2,20 @@
 
 All notable changes to the Bosch eBike app for Homey Pro.
 
+## [1.1.4] — 2026-09
+
+### Changed
+- Removed the `homey:manager:api` permission and the homey-api dependency —
+  widget device selection is now resolved app-side without extra permissions.
+
+## [1.1.3] — 2026-09
+
+### Changed
+- eBike Location widget footer now shows when the bike was last *seen*
+  (the ConnectModule's report time) instead of when the app last polled.
+- New per-bike status light: green when the location feed is healthy,
+  yellow when checks are stale or failing, grey for ride-derived positions.
+
 ## [1.1.2] — 2026-09
 
 ### Added
